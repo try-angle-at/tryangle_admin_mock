@@ -1,0 +1,85 @@
+{
+  "imgTitle": "하이앵글 컵포즈",
+  "imgDesc": "위에서 아래를 극단적으로 내려다보는 하이 앵글(High Angle)로 촬영하여, 얼굴을 가린 컵을 강조하고 신체 비율을 독특하게 왜곡한 구도입니다.",
+  "imgUrl": "./cup-pose.png",
+  "imgCategory": ["하이앵글", "MZ포즈", "일상", "OOTD", "얼굴가리기"],
+  "refAnalysisOnly": {
+    "refInput": {
+      "imagePath": "/legacy/hot1.jpg",
+      "imageSize": {
+        "width": 736.0,
+        "height": 981.0
+      },
+      "cameraPosition": "unspecified",
+      "aspectRatio": "4:3"
+    },
+    "analysisModulesUsed": [
+      "EXIFModule",
+      "GeoCalibModule",
+      "DepthModule",
+      "FocalLengthModule",
+      "DistanceModule",
+      "FramingModule",
+      "BBoxModule",
+      "SilhouetteModule",
+      "CompositionModule"
+    ],
+    "exifInfo": {
+      "focalLength": 8.0,
+      "focalLength35mm": 52.0,
+      "aperture": 1.8,
+      "iso": 80,
+      "exposureTime": 0.008,
+      "lensModel": "iPhone Back Camera 6.86mm f/1.78"
+    },
+    "geoCalibResult": {
+      "vfovDegrees": 65.0,
+      "rollDegrees": 0.5,
+      "pitchDegrees": -65.2,
+      "focalLength35mm": 24.0,
+      "convergedAtStep": 12,
+      "finalCost": 0.00015
+    },
+    "depthResult": {
+      "compressionIndex": 0.85,
+      "depthMap": null
+    },
+    "focalLengthInfo": {
+      "focalLength35mm": 52,
+      "source": "exif",
+      "confidence": 1.0,
+      "lensType": "normal"
+    },
+    "distanceEstimation": {
+      "shoulderRatio": 0.182,
+      "estimatedDistanceM": 2.35,
+      "bodyTypeAssumption": "medium"
+    },
+    "framingResult": {
+      "shotType": "fullShot",
+      "shotTypeConfidence": 0.92,
+      "headroom": 0.18,
+      "optimalHeadroom": 0.1,
+      "headroomStatus": "loose",
+      "gazeDirection": "downward",
+      "leadRoom": null,
+      "leadRoomStatus": null,
+      "cameraAngle": "highAngle",
+      "cameraAngleValue": -65.0,
+      "bodyCoverage": 0.65,
+      "nosePosition": {
+        "x": 0.512,
+        "y": 0.325
+      },
+      "croppingViolations": [],
+      "overallScore": 0.88
+    },
+    "BBox": "0f0a071c09f618ce",
+    "poseKeypoints": {
+      "count": 133,
+      "indexRange": "0..132",
+      "format": "normalized_xy_confidence",
+        "kp": "14000cb9264813bb0c4e258014500c4e258012f20ce401f415180ce401f410fe10362260170c10042328157c11941ba001c219f912201c841a5e11d61a2c1b58122a261c23f0123425e412f22eb71bd113f731041964143a310419001476313b189c156232321838161232321770141e0af001f414500af201f414a60af501f4150e0af001f4155a0af201f415900b0401f415b80b2c01f415ae0b4a01f415b60bc201f415ae0ca201f415900d2001f4155a0d9801f4150e0dec01f414a60e2e01f414500e5601f414000e6201f413b00e5601f413600e2e01f4131a0dec01f412d40d9801f4129e0d2001f412760ca201f412580bc201f4124e0b4a01f412580b2c01f412760b0401f4129e0adb01f412d40b0401f4131a0b5401f413520bc801f413920be8022c13ec0b860258141e0b86025814500bc8022c14b40bc8022c14e60b86025815220b860258155e0bc8022c14500be8023c14460bf4023c143c0c0e023c14500c4a022c146e0c0e022c14780bf4022c12fc0c4a022c13380c720258137e0c7c025813c40c72025814000c4a022c13240c6a0258136a0c72025813a60c72025813e20c6a025813100cd8022c134c0ca6022c13880c88022c13c20ca6022c13fc0cd8022c13c20d0a022c13880d1e022c134c0d0a022c13100cd8022c13880cc4022c14020cd8022c13880cf6022c11c70ed8251c11f40e9423f012440e24232812790dec226012ac0da4213411940e42245411a80e24238c11c70dec22c411e60da421f011610e6023ec11750e24232811940e06226011b10dec21f411300eb0238c11450e8422c411610e242260117d0dec213411030eea0232811160eb0226011300e742198114f0e1a20d014eb1068251c1504105424541536102c232815680fe022c415900f8c21341528101824b815460fec23f015640f70232815780f2a22601518103623f0152c10042328154a0f8c226015680f70213414e1107c238c14f4106822c4150a104022601522101821f414c910a4232814dc1068226014f010402134141c9103621f4"
+    }
+  }
+}
