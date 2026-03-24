@@ -102,7 +102,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-
   background-image:linear-gradient(rgba(255,255,255,.009) 1px,transparent 1px),
     linear-gradient(90deg,rgba(255,255,255,.009) 1px,transparent 1px);
   background-size:40px 40px;pointer-events:none}
-.cinner{position:relative;display:inline-block}
+.cinner{position:relative;display:inline-block;z-index:2;flex:0 0 auto}
 #liveCvs,#poseCvs,#ghostCvs{display:block}
 #poseCvs,#ghostCvs{position:absolute;top:0;left:0;pointer-events:none}
 .corn{display:none}
@@ -112,6 +112,8 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-
   border-radius:28px;padding:5px 14px;z-index:20;white-space:nowrap}
 .mhbig{font-size:18px;font-family:var(--mono);font-weight:700;color:var(--acc)}
 .mhlbl{font-size:8px;font-family:var(--mono);color:var(--t3);text-transform:uppercase;letter-spacing:.08em}
+.mhmatch .mhbig{font-size:20px;line-height:1}
+.mhmatch .mhlbl{letter-spacing:.12em}
 .mhdiv{width:1px;height:16px;background:var(--border);flex-shrink:0}
 .mhm{display:flex;flex-direction:column;align-items:center;gap:1px}
 .mhv{font-size:10px;font-family:var(--mono);color:var(--t1)}
@@ -145,7 +147,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-
   width:7px;height:7px;border-radius:50%;background:#fff}
 /* invisible range input overlay for scrubbing */
 .scrubinput{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:5;
-  -webkit-appearance:none;appearance:none;width:100%;margin:0}
+  -webkit-appearance:none;appearance:none;left:12px;right:12px;width:auto;margin:0}
 .tlctrl{display:flex;align-items:center;gap:5px;padding:0 12px 5px;flex-shrink:0}
 .playbtn{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;
   background:var(--bg-card);border:1px solid var(--border);color:var(--t2);
@@ -283,18 +285,26 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-
         <canvas id="liveCvs" width="340" height="453"></canvas>
         <canvas id="poseCvs" width="340" height="453"></canvas>
         <canvas id="ghostCvs" width="340" height="453"></canvas>
-        <div class="corn tl"></div><div class="corn tr"></div>
-        <div class="corn bl"></div><div class="corn br"></div>
       </div>
       <div class="frov" id="frov"><div class="frlbl">&#9646;&#9646; FROZEN</div></div>
       <div class="matchhud">
-        <div><div class="mhbig" id="mScore">—</div><div class="mhlbl">match score</div></div>
+      <div class="grow">
+        <div class="gsvg">
+          <svg width="58" height="58" viewBox="0 0 58 58">
+            <circle class="gtrk" cx="29" cy="29" r="21"/>
+            <circle class="gfil" id="gFil" cx="29" cy="29" r="21" stroke-dasharray="131.9" stroke-dashoffset="131.9"/>
+          </svg>
+          <div class="glbl"><div class="gpct" id="gPct">—</div><div class="gsub">MATCH</div></div>
+        </div>
+      </div>
         <div class="mhdiv"></div>
         <div class="mhm"><div class="mhv" id="mAngle">—</div><div class="mhk">angle &Delta;</div></div>
         <div class="mhdiv"></div>
         <div class="mhm"><div class="mhv" id="mDist">—</div><div class="mhk">dist &Delta;</div></div>
         <div class="mhdiv"></div>
         <div class="mhm"><div class="mhv" id="mKp">—</div><div class="mhk">kp match</div></div>
+        <div class="mhdiv"></div>
+        <div class="mhm"><div class="mhv" id="mFrame">—</div><div class="mhk">frame</div></div>
       </div>
     </div>
   </div>
@@ -302,7 +312,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-
   <!-- TIMELINE -->
   <div class="tl">
     <div class="tlhdr">
-      <div class="tltitle">시계열 / timeline</div>
+      <div class="tltitle">시계열</div>
       <div class="tlinfo">
         <div class="tlts">frame <b id="tlFN">0</b> &nbsp;·&nbsp; <b id="tlTS">00:00.000</b></div>
         <div class="rbtngrp">
@@ -320,9 +330,6 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-
     </div>
     <div class="tlctrl">
       <button class="playbtn" id="playBtn" onclick="togglePlay(this)">&#9654;</button>
-      <button class="spdbtn sel" onclick="setSpd(this,1)">1×</button>
-      <button class="spdbtn"    onclick="setSpd(this,2)">2×</button>
-      <button class="spdbtn"    onclick="setSpd(this,4)">4×</button>
       <div class="posbar" id="posBar"><div class="posfill" id="posFill"></div></div>
       <div class="tlcnt"><b id="curIdx">0</b> / <span id="totIdx">0</span></div>
     </div>
@@ -330,27 +337,16 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-
 
   <!-- RIGHT -->
   <div class="rpanel">
-
-    <div class="rsec">
-      <div class="rsh">종합 매칭</div>
-      <div class="grow">
-        <div class="gsvg">
-          <svg width="58" height="58" viewBox="0 0 58 58">
-            <circle class="gtrk" cx="29" cy="29" r="21"/>
-            <circle class="gfil" id="gFil" cx="29" cy="29" r="21" stroke-dasharray="131.9" stroke-dashoffset="131.9"/>
-          </svg>
-          <div class="glbl"><div class="gpct" id="gPct">—</div><div class="gsub">MATCH</div></div>
-        </div>
-        <div class="ginf">
-          <div class="gi"><span class="gik">angle diff</span><span class="giv" id="gAngle" style="color:var(--acc)">—</span></div>
-          <div class="gi"><span class="gik">dist diff</span><span class="giv" id="gDist" style="color:var(--acc)">—</span></div>
-          <div class="gi"><span class="gik">body conf</span><span class="giv" id="gConf" style="color:var(--amb)">—</span></div>
-          <div class="gi"><span class="gik">frame</span><span class="giv" id="gFrame" style="color:var(--t2)">—</span></div>
-        </div>
-      </div>
-    </div>
-
     <div class="detailgrid">
+      <div class="rsec">
+        <div class="rsh">REF 목표값</div>
+        <div class="drow"><span class="dk">camera angle</span><span class="dv r">EYE LEVEL</span></div>
+        <div class="drow"><span class="dk">tilt</span><span class="dv r">+2°</span></div>
+        <div class="drow"><span class="dk">distance</span><span class="dv r">MEDIUM</span></div>
+        <div class="drow"><span class="dk">shot type</span><span class="dv r">HALF BODY</span></div>
+        <div class="drow"><span class="dk">shoulder ratio</span><span class="dv r">0.41</span></div>
+      </div>
+
       <div class="rsec">
         <div class="rsh">AI 출력 (현재 프레임)</div>
         <div class="drow"><span class="dk">camera angle</span><span class="dv l" id="lAngle">—</span></div>
@@ -360,17 +356,26 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-
         <div class="drow"><span class="dk">shoulder ratio</span><span class="dv l" id="lShldr">—</span></div>
         <div class="drow"><span class="dk">conf avg</span><span class="dv l" id="lConf">—</span></div>
       </div>
-
-      <div class="rsec">
-        <div class="rsh">REF 목표값</div>
-        <div class="drow"><span class="dk">camera angle</span><span class="dv r">EYE LEVEL</span></div>
-        <div class="drow"><span class="dk">tilt</span><span class="dv r">+2°</span></div>
-        <div class="drow"><span class="dk">distance</span><span class="dv r">MEDIUM</span></div>
-        <div class="drow"><span class="dk">shot type</span><span class="dv r">HALF BODY</span></div>
-        <div class="drow"><span class="dk">shoulder ratio</span><span class="dv r">0.41</span></div>
-      </div>
     </div>
 
+    
+    <div class="rsec">
+      <div class="rsh">파이프라인 상태</div>
+      <div class="pnodes">
+        <div class="pn on"><div class="pled on"></div><div class="pi"><div class="pn-name">G0 · 전처리</div><div class="pn-sub">letterbox · normalize</div></div><div class="pms" id="p0">—</div></div>
+        <div class="pn on"><div class="pled on"></div><div class="pi"><div class="pn-name">G1 · RTMDet</div><div class="pn-sub">person bbox</div></div><div class="pms" id="p1">—</div></div>
+        <div class="pn on"><div class="pled on"></div><div class="pi"><div class="pn-name">G2 · DWPose</div><div class="pn-sub">133-kp · RTMPose-L</div></div><div class="pms" id="p2">—</div></div>
+        <div class="pn wn"><div class="pled wn"></div><div class="pi"><div class="pn-name">G3 · 구도 분석</div><div class="pn-sub">angle · tilt · dist</div></div><div class="pms" id="p3">—</div></div>
+        <div class="pn on"><div class="pled on"></div><div class="pi"><div class="pn-name">G4 · 매칭</div><div class="pn-sub">ref ↔ live diff</div></div><div class="pms" id="p4">—</div></div>
+        <div class="pn"><div class="pled off"></div><div class="pi"><div class="pn-name">G5 · 피드백</div><div class="pn-sub">대기 중</div></div><div class="pms">—</div></div>
+      </div>
+    </div>
+    
+    <div class="rsec">
+      <div class="rsh">이벤트 로그</div>
+      <div class="loglist" id="logList"></div>
+    </div>
+    
     <div class="rsec">
       <div class="rsh">KP 신뢰도 비교</div>
       <div class="cbi"><div class="cbl">Body·17kp <span id="cbB">—</span></div>
@@ -391,24 +396,6 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-
         </div>
       </div>
     </div>
-
-    <div class="rsec">
-      <div class="rsh">파이프라인 상태</div>
-      <div class="pnodes">
-        <div class="pn on"><div class="pled on"></div><div class="pi"><div class="pn-name">G0 · 전처리</div><div class="pn-sub">letterbox · normalize</div></div><div class="pms" id="p0">—</div></div>
-        <div class="pn on"><div class="pled on"></div><div class="pi"><div class="pn-name">G1 · RTMDet</div><div class="pn-sub">person bbox</div></div><div class="pms" id="p1">—</div></div>
-        <div class="pn on"><div class="pled on"></div><div class="pi"><div class="pn-name">G2 · DWPose</div><div class="pn-sub">133-kp · RTMPose-L</div></div><div class="pms" id="p2">—</div></div>
-        <div class="pn wn"><div class="pled wn"></div><div class="pi"><div class="pn-name">G3 · 구도 분석</div><div class="pn-sub">angle · tilt · dist</div></div><div class="pms" id="p3">—</div></div>
-        <div class="pn on"><div class="pled on"></div><div class="pi"><div class="pn-name">G4 · 매칭</div><div class="pn-sub">ref ↔ live diff</div></div><div class="pms" id="p4">—</div></div>
-        <div class="pn"><div class="pled off"></div><div class="pi"><div class="pn-name">G5 · 피드백</div><div class="pn-sub">대기 중</div></div><div class="pms">—</div></div>
-      </div>
-    </div>
-
-    <div class="rsec">
-      <div class="rsh">이벤트 로그</div>
-      <div class="loglist" id="logList"></div>
-    </div>
-
   </div>
 </div>
 
@@ -635,24 +622,22 @@ function drawRef(){
 }
 
 /* ── Live background ── */
-let nph=0;
 function drawLiveBg(fn){
   const cw=lCvs.width,ch=lCvs.height;
   lX.clearRect(0,0,cw,ch);
   const bg=lX.createLinearGradient(0,0,0,ch);
-  bg.addColorStop(0,'#0a0a12');bg.addColorStop(1,'#12121e');
-  lX.fillStyle=bg;lX.fillRect(0,0,cw,ch);
-  nph+=.018;
-  const gx=cw/2+Math.sin(nph)*35,gy=ch/2+Math.cos(nph*.6)*25;
-  const gr=lX.createRadialGradient(gx,gy,10,gx,gy,200);
-  gr.addColorStop(0,'rgba(110,231,183,.020)');gr.addColorStop(1,'transparent');
-  lX.fillStyle=gr;lX.fillRect(0,0,cw,ch);
-  lX.globalAlpha=.025;
-  for(let y=0;y<ch;y+=4){lX.fillStyle='rgba(255,255,255,.9)';lX.fillRect(0,y,cw,1);}
-  lX.globalAlpha=1;
-  lX.font='9px Space Mono';lX.fillStyle='rgba(110,231,183,.11)';
-  lX.textAlign='center';lX.fillText('NO VIDEO · DATA ONLY',cw/2,ch/2);lX.textAlign='left';
-  lX.fillStyle='rgba(255,255,255,.055)';lX.fillText(`FRAME #${String(fn).padStart(6,'0')}`,8,ch-8);
+  bg.addColorStop(0,'#cfd4da');
+  bg.addColorStop(1,'#c1c7ce');
+  lX.fillStyle=bg;
+  lX.fillRect(0,0,cw,ch);
+  lX.strokeStyle='rgba(20,24,31,.11)';
+  lX.lineWidth=1;
+  for(let y=0;y<ch;y+=24){
+    lX.beginPath();
+    lX.moveTo(0,y+.5);
+    lX.lineTo(cw,y+.5);
+    lX.stroke();
+  }
 }
 
 /* ── Ghost overlay ── */
@@ -704,7 +689,7 @@ const SIM={
   tilt:2,shoulder:.41,
   cB:.72,cF:.68,cLH:.61,cRH:.58
 };
-let pbIdx=-1,pbPlay=false,pbSpd=1,pbAcc=0,pbLast=0;
+let pbIdx=-1,pbPlay=false,pbAcc=0,pbLast=0;
 let tlRange=150;
 
 /* ═══════════════════════════════════════════════
@@ -713,12 +698,21 @@ let tlRange=150;
 function applyEntry(e){
   const s=e.score;
   const circ=131.9;
-  E('gFil').style.strokeDashoffset=circ-circ*s/100;
-  E('gFil').style.stroke=s>=75?'#6ee7b7':s>=50?'#fbbf24':'#f87171';
-  E('gPct').textContent=s+'%';E('gPct').style.color=s>=75?'var(--acc)':s>=50?'var(--amb)':'var(--red)';
+  const gFil=E('gFil');
+  if(gFil){
+    gFil.style.strokeDashoffset=circ-circ*s/100;
+    gFil.style.stroke=s>=75?'#6ee7b7':s>=50?'#fbbf24':'#f87171';
+  }
+  const gPct=E('gPct');
+  if(gPct){
+    gPct.textContent=s+'%';
+    gPct.style.color=s>=75?'var(--acc)':s>=50?'var(--amb)':'var(--red)';
+  }
   const td=(e.tilt-2).toFixed(1);
-  E('gAngle').textContent=`d${Math.abs(td)} deg`;E('gDist').textContent='MED';
-  E('gConf').textContent=e.cB.toFixed(3);E('gFrame').textContent=`#${e.frame}`;
+  const gAngle=E('gAngle');if(gAngle) gAngle.textContent=`d${Math.abs(td)} deg`;
+  const gDist=E('gDist');if(gDist) gDist.textContent='MED';
+  const gConf=E('gConf');if(gConf) gConf.textContent=e.cB.toFixed(3);
+  const gFrame=E('gFrame');if(gFrame) gFrame.textContent=`#${e.frame}`;
   E('lAngle').textContent='EYE LEVEL';
   E('lTilt').textContent=(e.tilt>=0?'+':'')+e.tilt+' deg';
   E('lDist').textContent='MEDIUM';E('lShot').textContent='HALF BODY';
@@ -728,8 +722,13 @@ function applyEntry(e){
   E('cbFbar').style.width=Math.round(e.cF*100)+'%';E('cbF').textContent=e.cF.toFixed(3);
   E('cbLHbar').style.width=Math.round(e.cLH*100)+'%';E('cbLH').textContent=e.cLH.toFixed(3);
   E('cbRHbar').style.width=Math.round(e.cRH*100)+'%';E('cbRH').textContent=e.cRH.toFixed(3);
-  E('mScore').textContent=s+'%';E('mScore').style.color=s>=75?'var(--acc)':s>=50?'var(--amb)':'var(--red)';
+  const mScore=E('mScore');
+  if(mScore){
+    mScore.textContent=s+'%';
+    mScore.style.color=s>=75?'var(--acc)':s>=50?'var(--amb)':'var(--red)';
+  }
   E('mAngle').textContent=`d${Math.abs(td)}`;E('mDist').textContent='OK';E('mKp').textContent='133';
+  E('mFrame').textContent='#'+e.frame;
   E('p0').textContent=rms(1,3);E('p1').textContent=rms(3,8);
   E('p2').textContent=rms(8,16);E('p3').textContent=rms(2,5);E('p4').textContent=rms(1,3);
   E('tlFN').textContent=e.frame;
@@ -762,9 +761,11 @@ const TL_TRACKS=[
   {key:'cF',     lbl:'face',    col:'#a78bfa',lo:0,hi:1},
   {key:'tilt',   lbl:'tilt deg', col:'#fbbf24',lo:-15,hi:15},
 ];
+const TL_PAD_X=12;
 function resizeTl(){
   const w=document.getElementById('tlWrap');
-  tCvs.width=w.clientWidth;tCvs.height=w.clientHeight;
+  tCvs.width=Math.max(0,w.clientWidth-(TL_PAD_X*2));
+  tCvs.height=w.clientHeight;
 }
 function drawTimeline(){
   resizeTl();
@@ -806,11 +807,11 @@ function drawTimeline(){
   // needle
   const ne=E('needle');
   if(pbIdx<0||pbIdx>=HIST.length){
-    ne.style.left=(cw-1)+'px';
+    ne.style.left=(TL_PAD_X+cw-1)+'px';
   } else {
     const ri=pbIdx-si;
     const fr=Math.max(0,ri/(D.length-1));
-    ne.style.left=Math.max(0,Math.min(cw-1,fr*cw))+'px';
+    ne.style.left=(TL_PAD_X+Math.max(0,Math.min(cw-1,fr*cw)))+'px';
   }
 }
 
@@ -844,11 +845,6 @@ function togglePlay(btn){
   btn.classList.toggle('playing',pbPlay);btn.textContent=pbPlay?'||':'>';
   if(pbPlay&&(pbIdx<0||pbIdx>=HIST.length-1)){pbIdx=0;}
   badgeUpdate();
-}
-function setSpd(btn,s){
-  pbSpd=s;
-  document.querySelectorAll('.spdbtn').forEach(b=>b.classList.remove('sel'));
-  btn.classList.add('sel');
 }
 document.getElementById('scrub').addEventListener('input',e=>{
   const idx=parseInt(e.target.value);
@@ -910,7 +906,7 @@ function tick(ts){
   if(pbPlay&&HIST.length>1){
     // Playback mode
     if(pbLast>0){
-      pbAcc+=(ts-pbLast)*pbSpd*(30/1000);
+      pbAcc+=(ts-pbLast)*(30/1000);
       while(pbAcc>=1){
         pbAcc-=1;pbIdx++;
         if(pbIdx>=HIST.length){
