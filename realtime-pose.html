@@ -116,6 +116,12 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-
   cursor:pointer;transition:all .15s}
 .overlaybtn:hover{border-color:rgba(110,231,183,.35)}
 .overlaybtn.on{background:var(--acc-d);border-color:rgba(110,231,183,.35);color:var(--acc)}
+.stagemeta{position:absolute;top:10px;left:10px;z-index:24;display:flex;align-items:center;gap:8px}
+.stagemeta .mbadge{background:rgba(7,7,10,.78);backdrop-filter:blur(10px)}
+.stagefps{font-size:11px;font-family:var(--mono);color:var(--t2);white-space:nowrap;
+  padding:3px 8px;border-radius:20px;background:rgba(7,7,10,.78);
+  border:1px solid var(--border);backdrop-filter:blur(10px)}
+.stagefps b{color:var(--amb)}
 .matchhud{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);
   display:flex;align-items:center;gap:10px;
   background:rgba(7,7,10,.92);border:1px solid var(--border-act);backdrop-filter:blur(12px);
@@ -249,8 +255,6 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-
       <span class="breadcrumb">ref /</span>
       <span class="breadcrumb-name">hot1.jpg</span>
     </div>
-    <div class="mbadge" id="modeBadge"><span class="livedot"></span> LIVE</div>
-    <span id="topFps" class="topmeta">frame <b>0</b></span>
   </div>
   <div class="topbar-right">
     <button class="tbtn" id="btnFreeze" onclick="toggleFreeze(this)">Freeze</button>
@@ -291,6 +295,10 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-
   <div class="center">
     <div class="stage" id="stage">
       <div id="fspk" class="fspk"></div>
+      <div class="stagemeta">
+        <div class="mbadge" id="modeBadge"><span class="livedot"></span> LIVE</div>
+        <span id="topFps" class="stagefps">frame <b>0</b></span>
+      </div>
       <div class="cinner" id="cinner">
         <canvas id="liveCvs" width="340" height="453"></canvas>
         <canvas id="poseCvs" width="340" height="453"></canvas>
@@ -348,6 +356,13 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-
 
   <!-- RIGHT -->
   <div class="rpanel">
+    <div class="rsec">
+      <div class="rsh">촬영 메타정보</div>
+      <div class="drow"><span class="dk">device</span><span class="dv" id="metaDevice">—</span></div>
+      <div class="drow"><span class="dk">capture time</span><span class="dv" id="metaCaptureTime">— | —</span></div>
+      <div class="drow"><span class="dk">aspect ratio</span><span class="dv" id="metaAspect">—</span></div>
+    </div>
+
     <div class="detailgrid">
       <div class="rsec">
         <div class="rsh">REF 목표값</div>
@@ -691,12 +706,41 @@ const SIM={
 };
 let pbIdx=-1,pbPlay=false,pbAcc=0,pbLast=0;
 let tlRange=150;
+let captureStartAt=Date.now();
+
+function gcd(a,b){while(b!==0){const t=b;b=a%b;a=t;}return a;}
+function aspectText(w,h){
+  const ww=Math.round(w),hh=Math.round(h);
+  if(!ww||!hh) return '—';
+  const g=gcd(ww,hh);
+  return `${ww/g}:${hh/g}`;
+}
+function pad2(n){return String(n).padStart(2,'0');}
+function formatClock(ms){
+  const d=new Date(ms);
+  return `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
+}
+function detectDevice(){
+  const ua=navigator.userAgent||'';
+  if(/iPhone/i.test(ua)) return 'iPhone';
+  if(/iPad/i.test(ua)) return 'iPad';
+  if(/Android/i.test(ua)) return 'Android';
+  if(/Windows/i.test(ua)) return 'Windows PC';
+  if(/Macintosh|Mac OS X/i.test(ua)) return 'Mac';
+  return 'Unknown Device';
+}
+function updateCaptureMeta(entry){
+  const elapsedMs=Math.round((entry.frame/30)*1000);
+  const endAt=captureStartAt+elapsedMs;
+  E('metaCaptureTime').textContent=`${formatClock(captureStartAt)} | ${formatClock(endAt)}`;
+}
 
 /* ═══════════════════════════════════════════════
    UI update
 ═══════════════════════════════════════════════ */
 function applyEntry(e){
   const s=e.score;
+  updateCaptureMeta(e);
   const circ=131.9;
   const gFil=E('gFil');
   if(gFil){
@@ -951,6 +995,8 @@ function tick(ts){
 }
 
 /* ── Init ── */
+E('metaDevice').textContent=detectDevice();
+E('metaAspect').textContent=aspectText(lCvs.width,lCvs.height);
 drawRef();
 log('ok','DWPose 133kp 모델 로드 완료');
 log('ok','레퍼런스 hot1.jpg 분석 완료');
