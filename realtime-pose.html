@@ -258,7 +258,6 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-
     </div>
   </div>
   <div class="topbar-right">
-    <button class="tbtn" id="btnFreeze" onclick="toggleFreeze(this)">Freeze</button>
     <button class="tbtn" onclick="resetSim()">Reset</button>
   </div>
 </div>
@@ -710,9 +709,9 @@ function matchScore(lkps){
    History & simulation state
 ═══════════════════════════════════════════════ */
 const HIST=[];
-const HMAX=1800;
+const HMAX=1000;
 const SIM={
-  frame:0,overlay:true,frozen:false,
+  frame:0,overlay:true,frozen:false,captureEnded:false,
   tilt:2,shoulder:.41,
   cB:.72,cF:.68,cLH:.61,cRH:.58
 };
@@ -895,21 +894,27 @@ function toggleOverlay(btn){
   btn.classList.toggle('on',SIM.overlay);
   drawOverlay();
 }
-function toggleFreeze(btn){
-  SIM.frozen=!SIM.frozen;
-  btn.classList.toggle('won',SIM.frozen);
-  btn.textContent=SIM.frozen?'Unfreeze':'Freeze';
-  E('frov').classList.toggle('show',SIM.frozen);
-}
 function resetSim(){
   SIM.frame=0;SIM.tilt=2;SIM.shoulder=.41;
-  SIM.cB=.72;SIM.cF=.68;SIM.cLH=.61;SIM.cRH=.58;SIM.frozen=false;
+  SIM.cB=.72;SIM.cF=.68;SIM.cLH=.61;SIM.cRH=.58;SIM.frozen=false;SIM.captureEnded=false;
   captureStartAt=Date.now();
   E('metaCaptureTime').textContent='— | —';
   E('metaAspect').textContent='1:1';
   HIST.length=0;pbIdx=-1;pbPlay=false;pbAcc=0;pbLast=0;
+  E('frov').classList.remove('show');
   E('playBtn').classList.remove('playing');E('playBtn').textContent='[>]';
   badgeUpdate();log('ok','시뮬레이션 리셋');
+}
+function endCaptureAtLimit(){
+  SIM.frozen=false;
+  SIM.captureEnded=true;
+  pbPlay=false;
+  pbIdx=Math.max(0,HIST.length-1);
+  E('playBtn').classList.remove('playing');
+  E('playBtn').textContent='>';
+  E('frov').classList.remove('show');
+  badgeUpdate();
+  log('ok',`촬영 자동 종료: ${HMAX}프레임 도달`);
 }
 function setRange(btn,n){
   tlRange=n;
@@ -945,7 +950,7 @@ function badgeUpdate(){
   const b=E('modeBadge');
   if(pbIdx>=0&&pbIdx<HIST.length){
     b.style.cssText='border-color:var(--amb);color:var(--amb);background:var(--amb-d)';
-    b.textContent=pbPlay?'> REPLAY':'|| SCRUB';
+    b.textContent=pbPlay?'> REPLAY':(SIM.captureEnded?'■ RECORD END':'|| SCRUB');
   } else {
     b.style.cssText='border-color:var(--acc);color:var(--acc);background:var(--acc-d)';
     b.innerHTML='<span class="livedot"></span> LIVE';
@@ -1024,6 +1029,7 @@ function tick(ts){
     drawOverlay();applyEntry(e);updateSparkline();
     if(ts-lastTl>80){drawTimeline();lastTl=ts;}
     if(ts-lastLog>2200){autoLog();lastLog=ts;}
+    if(SIM.frame>=HMAX){endCaptureAtLimit();}
   } else {
     pbLast=0;pbAcc=0;
   }
