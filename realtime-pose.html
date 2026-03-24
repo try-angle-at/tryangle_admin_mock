@@ -106,7 +106,8 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-
     linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
   background-size:48px 48px;pointer-events:none}
 .cinner{position:relative;display:inline-block;z-index:2;flex:0 0 auto;
-  background:#101116;border:1px solid rgba(255,255,255,.07);border-radius:8px;overflow:hidden}
+  background:#101116;border:1px solid rgba(255,255,255,.07);border-radius:8px;overflow:hidden;
+  transition:width .22s ease,height .22s ease}
 #liveCvs,#poseCvs,#overlayCvs{display:block}
 #poseCvs,#overlayCvs{position:absolute;top:0;left:0;pointer-events:none}
 .corn{display:none}
@@ -610,14 +611,24 @@ const pCvs=document.getElementById('poseCvs'),     pX=pCvs.getContext('2d');
 const oCvs=document.getElementById('overlayCvs'),  oX=oCvs.getContext('2d');
 const tCvs=document.getElementById('tlCvs'),       tX=tCvs.getContext('2d');
 
+function getPoseViewport(cw,ch){
+  const sw=REF_SOURCE.imageSize.width||736;
+  const sh=REF_SOURCE.imageSize.height||981;
+  const scale=Math.min(cw/sw,ch/sh);
+  const vw=sw*scale,vh=sh*scale;
+  return {ox:(cw-vw)/2,oy:(ch-vh)/2,vw,vh};
+}
+
 /* ── Skeleton renderer ── */
 function drawSkel(ctx,kps,cw,ch,{alpha=1,col=null,thin=false,face=true,hand=true}={}){
   const thresh=.18;
+  const vp=getPoseViewport(cw,ch);
   const ln=(a,b,color,lw)=>{
     const ka=kps[a],kb=kps[b];
     if(!ka||!kb||ka.conf<thresh||kb.conf<thresh) return;
     ctx.beginPath();
-    ctx.moveTo(ka.x*cw,ka.y*ch);ctx.lineTo(kb.x*cw,kb.y*ch);
+    ctx.moveTo(vp.ox+ka.x*vp.vw,vp.oy+ka.y*vp.vh);
+    ctx.lineTo(vp.ox+kb.x*vp.vw,vp.oy+kb.y*vp.vh);
     ctx.strokeStyle=col||color;ctx.lineWidth=lw;
     ctx.globalAlpha=alpha*Math.min(ka.conf,kb.conf);ctx.stroke();
   };
@@ -634,7 +645,7 @@ function drawSkel(ctx,kps,cw,ch,{alpha=1,col=null,thin=false,face=true,hand=true
     if(g==='face'&&!face) return;
     if((g==='lhand'||g==='rhand')&&!hand) return;
     const r=g==='body'?3.8*(thin?.7:1):g==='face'?1.1*(thin?.7:1):2*(thin?.7:1);
-    ctx.beginPath();ctx.arc(kp.x*cw,kp.y*ch,r,0,Math.PI*2);
+    ctx.beginPath();ctx.arc(vp.ox+kp.x*vp.vw,vp.oy+kp.y*vp.vh,r,0,Math.PI*2);
     ctx.fillStyle=col||KC[g];ctx.globalAlpha=alpha*kp.conf;ctx.fill();
   });
   ctx.globalAlpha=1;
@@ -659,19 +670,20 @@ function drawLiveBg(fn){
 function drawOverlay(){
   oX.clearRect(0,0,oCvs.width,oCvs.height);
   if(!SIM.overlay) return;
+  const vp=getPoseViewport(oCvs.width,oCvs.height);
   // dashed lines
   oX.setLineDash([4,3]);
   BODY_C.forEach(([a,b])=>{
     const ka=REF[a],kb=REF[b];if(!ka||!kb) return;
-    oX.beginPath();oX.moveTo(ka.x*oCvs.width,ka.y*oCvs.height);
-    oX.lineTo(kb.x*oCvs.width,kb.y*oCvs.height);
+    oX.beginPath();oX.moveTo(vp.ox+ka.x*vp.vw,vp.oy+ka.y*vp.vh);
+    oX.lineTo(vp.ox+kb.x*vp.vw,vp.oy+kb.y*vp.vh);
     oX.strokeStyle='rgba(129,140,248,.5)';oX.lineWidth=1.6;oX.globalAlpha=.6;oX.stroke();
   });
   oX.setLineDash([]);
   // solid dots
   REF.slice(0,17).forEach((kp,i)=>{
     if(kp.conf<.2) return;
-    oX.beginPath();oX.arc(kp.x*oCvs.width,kp.y*oCvs.height,3,0,Math.PI*2);
+    oX.beginPath();oX.arc(vp.ox+kp.x*vp.vw,vp.oy+kp.y*vp.vh,3,0,Math.PI*2);
     oX.fillStyle='#818cf8';oX.globalAlpha=.55;oX.fill();
   });
   oX.globalAlpha=1;
@@ -707,6 +719,10 @@ const SIM={
 let pbIdx=-1,pbPlay=false,pbAcc=0,pbLast=0;
 let tlRange=150;
 let captureStartAt=Date.now();
+const ASPECT_SWITCH_FRAMES=90;
+const REF_ASPECT=aspectText(REF_SOURCE.imageSize.width,REF_SOURCE.imageSize.height);
+const DEVICE_NAME='iPhone 14';
+const DEVICE_CANVAS_WIDTH=340;
 
 function gcd(a,b){while(b!==0){const t=b;b=a%b;a=t;}return a;}
 function aspectText(w,h){
@@ -721,18 +737,31 @@ function formatClock(ms){
   return `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
 }
 function detectDevice(){
-  const ua=navigator.userAgent||'';
-  if(/iPhone/i.test(ua)) return 'iPhone';
-  if(/iPad/i.test(ua)) return 'iPad';
-  if(/Android/i.test(ua)) return 'Android';
-  if(/Windows/i.test(ua)) return 'Windows PC';
-  if(/Macintosh|Mac OS X/i.test(ua)) return 'Mac';
-  return 'Unknown Device';
+  return DEVICE_NAME;
+}
+function aspectByFrame(frame){
+  return frame<ASPECT_SWITCH_FRAMES?'1:1':REF_ASPECT;
+}
+function aspectToSize(aspect){
+  const baseW=DEVICE_CANVAS_WIDTH;
+  const m=/^(\d+)\s*:\s*(\d+)$/.exec(aspect||'');
+  if(!m) return {w:340,h:453};
+  const aw=Number(m[1]),ah=Number(m[2]);
+  if(!aw||!ah) return {w:340,h:453};
+  return {w:baseW,h:Math.round(baseW*(ah/aw))};
+}
+function applyCanvasAspect(aspect){
+  const s=aspectToSize(aspect);
+  [lCvs,pCvs,oCvs].forEach(c=>{
+    c.width=s.w;
+    c.height=s.h;
+  });
 }
 function updateCaptureMeta(entry){
   const elapsedMs=Math.round((entry.frame/30)*1000);
   const endAt=captureStartAt+elapsedMs;
   E('metaCaptureTime').textContent=`${formatClock(captureStartAt)} | ${formatClock(endAt)}`;
+  E('metaAspect').textContent=entry.aspectRatio||'1:1';
 }
 
 /* ═══════════════════════════════════════════════
@@ -875,6 +904,9 @@ function toggleFreeze(btn){
 function resetSim(){
   SIM.frame=0;SIM.tilt=2;SIM.shoulder=.41;
   SIM.cB=.72;SIM.cF=.68;SIM.cLH=.61;SIM.cRH=.58;SIM.frozen=false;
+  captureStartAt=Date.now();
+  E('metaCaptureTime').textContent='— | —';
+  E('metaAspect').textContent='1:1';
   HIST.length=0;pbIdx=-1;pbPlay=false;pbAcc=0;pbLast=0;
   E('playBtn').classList.remove('playing');E('playBtn').textContent='[>]';
   badgeUpdate();log('ok','시뮬레이션 리셋');
@@ -896,6 +928,7 @@ document.getElementById('scrub').addEventListener('input',e=>{
   E('playBtn').classList.remove('playing');E('playBtn').textContent='>';
   badgeUpdate();
   const entry=HIST[idx];if(!entry) return;
+  applyCanvasAspect(entry.aspectRatio||aspectByFrame(entry.frame));
   drawLiveBg(entry.frame);
   pX.clearRect(0,0,pCvs.width,pCvs.height);
   if(entry.kps) drawSkel(pX,entry.kps,pCvs.width,pCvs.height,{alpha:1});
@@ -962,6 +995,7 @@ function tick(ts){
     }
     pbLast=ts;
     const e=HIST[pbIdx]||HIST[HIST.length-1];
+    applyCanvasAspect(e.aspectRatio||aspectByFrame(e.frame));
     drawLiveBg(e.frame);
     pX.clearRect(0,0,pCvs.width,pCvs.height);
     if(e.kps) drawSkel(pX,e.kps,pCvs.width,pCvs.height,{alpha:1});
@@ -980,8 +1014,10 @@ function tick(ts){
     const kps=makeLiveKps(.013);
     const score=matchScore(kps);
     const e={frame:SIM.frame,score,tilt:SIM.tilt,shoulder:SIM.shoulder,
-      cB:SIM.cB,cF:SIM.cF,cLH:SIM.cLH,cRH:SIM.cRH,kps};
+      cB:SIM.cB,cF:SIM.cF,cLH:SIM.cLH,cRH:SIM.cRH,
+      aspectRatio:aspectByFrame(SIM.frame),kps};
     HIST.push(e);if(HIST.length>HMAX) HIST.shift();
+    applyCanvasAspect(e.aspectRatio);
     drawLiveBg(SIM.frame);
     pX.clearRect(0,0,pCvs.width,pCvs.height);
     drawSkel(pX,kps,pCvs.width,pCvs.height,{alpha:1});
@@ -996,7 +1032,8 @@ function tick(ts){
 
 /* ── Init ── */
 E('metaDevice').textContent=detectDevice();
-E('metaAspect').textContent=aspectText(lCvs.width,lCvs.height);
+E('metaAspect').textContent='1:1';
+applyCanvasAspect('1:1');
 drawRef();
 log('ok','DWPose 133kp 모델 로드 완료');
 log('ok','레퍼런스 hot1.jpg 분석 완료');
