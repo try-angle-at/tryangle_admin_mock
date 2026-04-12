@@ -308,7 +308,6 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-
       <button class="overlaybtn on" id="btnOverlay" onclick="toggleOverlay(this)">Overlay ON</button>
       <div class="frov" id="frov"><div class="frlbl">&#9646;&#9646; FROZEN</div></div>
       <div class="matchhud">
-      <div class="grow">
         <div class="gsvg">
           <svg width="58" height="58" viewBox="0 0 58 58">
             <circle class="gtrk" cx="29" cy="29" r="21"/>
@@ -316,15 +315,12 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-
           </svg>
           <div class="glbl"><div class="gpct" id="gPct">—</div><div class="gsub">MATCH</div></div>
         </div>
-      </div>
         <div class="mhdiv"></div>
         <div class="mhm"><div class="mhv" id="mAngle">—</div><div class="mhk">angle &Delta;</div></div>
         <div class="mhdiv"></div>
         <div class="mhm"><div class="mhv" id="mDist">—</div><div class="mhk">dist &Delta;</div></div>
         <div class="mhdiv"></div>
         <div class="mhm"><div class="mhv" id="mKp">—</div><div class="mhk">kp match</div></div>
-        <div class="mhdiv"></div>
-        <div class="mhm"><div class="mhv" id="mFrame">—</div><div class="mhk">frame</div></div>
       </div>
     </div>
   </div>
@@ -728,9 +724,10 @@ const REF_ASPECT=aspectText(REF_SOURCE.imageSize.width,REF_SOURCE.imageSize.heig
 const DEVICE_NAME='iPhone 14';
 const DEVICE_CANVAS_WIDTH=340;
 const PIPELINE_GATE_COUNT=6;
-const PIPELINE_BASE_MS=[2.4,6.1,10.8,4.3,2.7,1.6];
-let pipelineAvgMs=Array(PIPELINE_GATE_COUNT).fill(null);
+let pipelineTotalMs=Array(PIPELINE_GATE_COUNT).fill(0);
 let lastFeedTid=null;
+let feedStartTid=null;
+let lastSimElapsedMs=0;
 let simGate=0;
 
 function gcd(a,b){while(b!==0){const t=b;b=a%b;a=t;}return a;}
@@ -777,25 +774,32 @@ function updateCaptureMeta(entry){
 }
 
 function resetPipelineState(){
-  pipelineAvgMs=Array(PIPELINE_GATE_COUNT).fill(null);
+  pipelineTotalMs=Array(PIPELINE_GATE_COUNT).fill(0);
   lastFeedTid=null;
+  feedStartTid=null;
+  lastSimElapsedMs=0;
   simGate=0;
 }
 
 function snapshotPipelineMs(){
-  return pipelineAvgMs.map(v=>v==null?null:Math.round(v));
+  return pipelineTotalMs.map(v=>Math.max(0,Math.round(v||0)));
 }
 
 function enrichPipelineFromFeed(entry,src){
   const gateRaw=Number(src?.bd?.meta?.gate);
   const gate=Number.isFinite(gateRaw)?clamp(Math.round(gateRaw),0,PIPELINE_GATE_COUNT-1):0;
   const tid=Number(src?.hd?.tid);
-  if(Number.isFinite(tid)&&Number.isFinite(lastFeedTid)){
-    const dt=Math.max(1,tid-lastFeedTid);
-    const prev=pipelineAvgMs[gate];
-    pipelineAvgMs[gate]=prev==null?dt:(prev*0.72+dt*0.28);
+  if(Number.isFinite(tid)){
+    if(!Number.isFinite(feedStartTid)) feedStartTid=tid;
+    if(Number.isFinite(lastFeedTid)){
+      const dt=Math.max(0,tid-lastFeedTid);
+      pipelineTotalMs[gate]+=dt;
+    }
+    lastFeedTid=tid;
+    entry.totalElapsedMs=Math.max(0,Math.round(tid-feedStartTid));
+  }else{
+    entry.totalElapsedMs=Math.round((entry.frame/30)*1000);
   }
-  if(Number.isFinite(tid)) lastFeedTid=tid;
   entry.pipelineGate=gate;
   entry.pipelineMs=snapshotPipelineMs();
   return entry;
@@ -811,13 +815,14 @@ function enrichPipelineFromSim(entry){
   if(targetGate>simGate) simGate=Math.min(targetGate,simGate+1);
   else if(targetGate<simGate) simGate=Math.max(targetGate,simGate-1);
 
-  for(let i=0;i<=simGate;i++){
-    const dt=PIPELINE_BASE_MS[i]+Math.random()*0.9;
-    const prev=pipelineAvgMs[i];
-    pipelineAvgMs[i]=prev==null?dt:(prev*0.82+dt*0.18);
-  }
+  const elapsedMs=Math.round((entry.frame/30)*1000);
+  const dt=Math.max(0,elapsedMs-lastSimElapsedMs);
+  pipelineTotalMs[simGate]+=dt;
+  lastSimElapsedMs=elapsedMs;
+
   entry.pipelineGate=simGate;
   entry.pipelineMs=snapshotPipelineMs();
+  entry.totalElapsedMs=elapsedMs;
   return entry;
 }
 
@@ -839,10 +844,7 @@ function renderPipeline(entry){
   for(let i=0;i<PIPELINE_GATE_COUNT;i++){
     const cell=E(`p${i}`);
     if(!cell) continue;
-    if(Number.isFinite(ms[i])) cell.textContent=`${ms[i]}ms`;
-    else if(i===gate) cell.textContent='RUN';
-    else if(i<gate) cell.textContent='done';
-    else cell.textContent='—';
+    cell.textContent=`${Math.max(0,Math.round(ms[i]||0))}ms`;
   }
 }
 
@@ -961,7 +963,6 @@ function applyEntry(e){
     mScore.style.color=s>=75?'var(--acc)':s>=50?'var(--amb)':'var(--red)';
   }
   E('mAngle').textContent=`d${Math.abs(td)}`;E('mDist').textContent='OK';E('mKp').textContent='133';
-  E('mFrame').textContent='#'+e.frame;
   renderPipeline(e);
   E('tlFN').textContent=e.frame;
   const ms=Math.round(e.frame/30*1000);
