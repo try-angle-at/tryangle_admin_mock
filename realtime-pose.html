@@ -389,12 +389,12 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-
     <div class="rsec">
       <div class="rsh">파이프라인 상태</div>
       <div class="pnodes">
-        <div class="pn on"><div class="pled on"></div><div class="pi"><div class="pn-name">G0 · 전처리</div><div class="pn-sub">letterbox · normalize</div></div><div class="pms" id="p0">—</div></div>
-        <div class="pn on"><div class="pled on"></div><div class="pi"><div class="pn-name">G1 · RTMDet</div><div class="pn-sub">person bbox</div></div><div class="pms" id="p1">—</div></div>
-        <div class="pn on"><div class="pled on"></div><div class="pi"><div class="pn-name">G2 · DWPose</div><div class="pn-sub">133-kp · RTMPose-L</div></div><div class="pms" id="p2">—</div></div>
-        <div class="pn wn"><div class="pled wn"></div><div class="pi"><div class="pn-name">G3 · 구도 분석</div><div class="pn-sub">angle · tilt · dist</div></div><div class="pms" id="p3">—</div></div>
-        <div class="pn on"><div class="pled on"></div><div class="pi"><div class="pn-name">G4 · 매칭</div><div class="pn-sub">ref ↔ live diff</div></div><div class="pms" id="p4">—</div></div>
-        <div class="pn"><div class="pled off"></div><div class="pi"><div class="pn-name">G5 · 피드백</div><div class="pn-sub">대기 중</div></div><div class="pms">—</div></div>
+        <div class="pn" data-gate="0"><div class="pled off"></div><div class="pi"><div class="pn-name">G0 · 전처리</div><div class="pn-sub">letterbox · normalize</div></div><div class="pms" id="p0">—</div></div>
+        <div class="pn" data-gate="1"><div class="pled off"></div><div class="pi"><div class="pn-name">G1 · RTMDet</div><div class="pn-sub">person bbox</div></div><div class="pms" id="p1">—</div></div>
+        <div class="pn" data-gate="2"><div class="pled off"></div><div class="pi"><div class="pn-name">G2 · DWPose</div><div class="pn-sub">133-kp · RTMPose-L</div></div><div class="pms" id="p2">—</div></div>
+        <div class="pn" data-gate="3"><div class="pled off"></div><div class="pi"><div class="pn-name">G3 · 구도 분석</div><div class="pn-sub">angle · tilt · dist</div></div><div class="pms" id="p3">—</div></div>
+        <div class="pn" data-gate="4"><div class="pled off"></div><div class="pi"><div class="pn-name">G4 · 매칭</div><div class="pn-sub">ref ↔ live diff</div></div><div class="pms" id="p4">—</div></div>
+        <div class="pn" data-gate="5"><div class="pled off"></div><div class="pi"><div class="pn-name">G5 · 피드백</div><div class="pn-sub">대기 중</div></div><div class="pms" id="p5">—</div></div>
       </div>
     </div>
     
@@ -727,6 +727,11 @@ const ASPECT_SWITCH_FRAMES=90;
 const REF_ASPECT=aspectText(REF_SOURCE.imageSize.width,REF_SOURCE.imageSize.height);
 const DEVICE_NAME='iPhone 14';
 const DEVICE_CANVAS_WIDTH=340;
+const PIPELINE_GATE_COUNT=6;
+const PIPELINE_BASE_MS=[2.4,6.1,10.8,4.3,2.7,1.6];
+let pipelineAvgMs=Array(PIPELINE_GATE_COUNT).fill(null);
+let lastFeedTid=null;
+let simGate=0;
 
 function gcd(a,b){while(b!==0){const t=b;b=a%b;a=t;}return a;}
 function aspectText(w,h){
@@ -769,6 +774,76 @@ function updateCaptureMeta(entry){
   const endAt=captureStartAt+elapsedMs;
   E('metaCaptureTime').textContent=`${formatClock(captureStartAt)} | ${formatClock(endAt)}`;
   E('metaAspect').textContent=normalizeAspect(entry.aspectRatio,'1:1');
+}
+
+function resetPipelineState(){
+  pipelineAvgMs=Array(PIPELINE_GATE_COUNT).fill(null);
+  lastFeedTid=null;
+  simGate=0;
+}
+
+function snapshotPipelineMs(){
+  return pipelineAvgMs.map(v=>v==null?null:Math.round(v));
+}
+
+function enrichPipelineFromFeed(entry,src){
+  const gateRaw=Number(src?.bd?.meta?.gate);
+  const gate=Number.isFinite(gateRaw)?clamp(Math.round(gateRaw),0,PIPELINE_GATE_COUNT-1):0;
+  const tid=Number(src?.hd?.tid);
+  if(Number.isFinite(tid)&&Number.isFinite(lastFeedTid)){
+    const dt=Math.max(1,tid-lastFeedTid);
+    const prev=pipelineAvgMs[gate];
+    pipelineAvgMs[gate]=prev==null?dt:(prev*0.72+dt*0.28);
+  }
+  if(Number.isFinite(tid)) lastFeedTid=tid;
+  entry.pipelineGate=gate;
+  entry.pipelineMs=snapshotPipelineMs();
+  return entry;
+}
+
+function enrichPipelineFromSim(entry){
+  const targetGate=
+    entry.score>=90?5:
+    entry.score>=75?4:
+    entry.score>=55?3:
+    entry.score>=35?2:
+    entry.score>=15?1:0;
+  if(targetGate>simGate) simGate=Math.min(targetGate,simGate+1);
+  else if(targetGate<simGate) simGate=Math.max(targetGate,simGate-1);
+
+  for(let i=0;i<=simGate;i++){
+    const dt=PIPELINE_BASE_MS[i]+Math.random()*0.9;
+    const prev=pipelineAvgMs[i];
+    pipelineAvgMs[i]=prev==null?dt:(prev*0.82+dt*0.18);
+  }
+  entry.pipelineGate=simGate;
+  entry.pipelineMs=snapshotPipelineMs();
+  return entry;
+}
+
+function renderPipeline(entry){
+  const gate=Number.isFinite(entry?.pipelineGate)?entry.pipelineGate:0;
+  const ms=Array.isArray(entry?.pipelineMs)?entry.pipelineMs:[];
+  document.querySelectorAll('.pn[data-gate]').forEach(node=>{
+    const g=Number(node.dataset.gate);
+    const led=node.querySelector('.pled');
+    const isDone=g<gate;
+    const isRun=g===gate;
+    node.classList.toggle('on',isDone);
+    node.classList.toggle('wn',isRun);
+    if(led){
+      led.classList.remove('on','wn','off');
+      led.classList.add(isDone?'on':(isRun?'wn':'off'));
+    }
+  });
+  for(let i=0;i<PIPELINE_GATE_COUNT;i++){
+    const cell=E(`p${i}`);
+    if(!cell) continue;
+    if(Number.isFinite(ms[i])) cell.textContent=`${ms[i]}ms`;
+    else if(i===gate) cell.textContent='RUN';
+    else if(i<gate) cell.textContent='done';
+    else cell.textContent='—';
+  }
 }
 
 async function loadJsonlFeed(){
@@ -887,8 +962,7 @@ function applyEntry(e){
   }
   E('mAngle').textContent=`d${Math.abs(td)}`;E('mDist').textContent='OK';E('mKp').textContent='133';
   E('mFrame').textContent='#'+e.frame;
-  E('p0').textContent=rms(1,3);E('p1').textContent=rms(3,8);
-  E('p2').textContent=rms(8,16);E('p3').textContent=rms(2,5);E('p4').textContent=rms(1,3);
+  renderPipeline(e);
   E('tlFN').textContent=e.frame;
   const ms=Math.round(e.frame/30*1000);
   const sec=Math.floor(ms/1000),frac=ms%1000;
@@ -984,6 +1058,7 @@ function resetSim(){
   SIM.frame=0;SIM.tilt=2;SIM.shoulder=.41;
   SIM.cB=.72;SIM.cF=.68;SIM.cLH=.61;SIM.cRH=.58;SIM.frozen=false;SIM.captureEnded=false;
   captureStartAt=Date.now();
+  resetPipelineState();
   feedIdx=0;
   E('metaCaptureTime').textContent='— | —';
   E('metaAspect').textContent='1:1';
@@ -1103,7 +1178,9 @@ function tick(ts){
     }
     let e;
     if(feedLoaded&&feedFrames.length){
-      e=feedToEntry(feedFrames[feedIdx],HIST[HIST.length-1]);
+      const src=feedFrames[feedIdx];
+      e=feedToEntry(src,HIST[HIST.length-1]);
+      enrichPipelineFromFeed(e,src);
       feedIdx++;
     }else{
       SIM.frame++;
@@ -1118,6 +1195,7 @@ function tick(ts){
       e={frame:SIM.frame,score,tilt:SIM.tilt,shoulder:SIM.shoulder,
         cB:SIM.cB,cF:SIM.cF,cLH:SIM.cLH,cRH:SIM.cRH,
         aspectRatio:aspectByFrame(SIM.frame),kps};
+      enrichPipelineFromSim(e);
     }
     HIST.push(e);if(HIST.length>HMAX) HIST.shift();
     applyCanvasAspect(normalizeAspect(e.aspectRatio,aspectByFrame(e.frame)));
@@ -1142,6 +1220,7 @@ function tick(ts){
 async function init(){
   E('metaDevice').textContent=detectDevice();
   E('metaAspect').textContent='1:1';
+  resetPipelineState();
   applyCanvasAspect('1:1');
   drawRef();
   log('ok','DWPose 133kp 모델 로드 완료');
