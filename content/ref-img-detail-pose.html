@@ -88,42 +88,22 @@
       position: relative;
       z-index: 50;
     }
-    .topbar-left { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
+    .topbar-left { display: flex; align-items: center; gap: 10px; min-width: 0; flex-shrink: 0; }
     .topbar-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-
-    .back-btn {
-      display: flex; align-items: center; gap: 5px;
-      font-size: 12px; font-family: var(--mono);
-      color: var(--text-2); background: none; border: none; cursor: pointer;
-      padding: 5px 8px; border-radius: var(--r-sm);
-      transition: all 0.15s;
-      white-space: nowrap;
-    }
-    .back-btn:hover { color: var(--text-1); background: var(--bg-card); }
-    .back-btn svg { opacity: 0.5; }
-
-    .topbar-divider { width: 1px; height: 18px; background: var(--border); flex-shrink: 0; }
-
-    .breadcrumb-wrap { display: flex; align-items: center; gap: 6px; min-width: 0; }
-    .breadcrumb {
-      font-size: 11px; font-family: var(--mono); color: var(--text-3);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    .topbar-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      min-width: 0;
+      max-width: min(calc(100% - 260px), 520px);
+      text-align: center;
+      pointer-events: none;
     }
     .breadcrumb-name {
+      display: block;
       font-size: 12px; font-family: var(--mono); color: var(--text-2);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-
-    .status-pill {
-      display: flex; align-items: center; gap: 5px;
-      font-size: 10px; font-family: var(--mono);
-      padding: 3px 8px; border-radius: 20px;
-      background: var(--accent-dim); color: var(--accent);
-      border: 1px solid rgba(110,231,183,0.2);
-      white-space: nowrap;
-    }
-    .status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
     .top-btn {
       font-size: 11px; font-family: var(--mono);
@@ -161,6 +141,12 @@
       background: var(--bg-hover);
       color: var(--text-1);
       box-shadow: inset 0 0 0 1px var(--border-act);
+    }
+
+    @media (max-width: 760px) {
+      .topbar { padding: 0 10px; }
+      .topbar-center { max-width: calc(100% - 140px); }
+      .theme-toggle-btn { min-width: 46px; padding: 5px 8px; }
     }
 
     /* ─── LAYOUT ─── */
@@ -485,27 +471,16 @@
   <!-- TOPBAR -->
   <div class="topbar">
     <div class="topbar-left">
-      <button class="back-btn">
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.5 2L3.5 6L7.5 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        목록
-      </button>
-      <div class="topbar-divider"></div>
-      <div class="breadcrumb-wrap">
-        <span class="breadcrumb">ref /</span>
-        <span class="breadcrumb-name" id="breadcrumbName">hot1.jpg</span>
-      </div>
-      <div class="status-pill">
-        <div class="status-dot"></div>
-        분석 완료
-      </div>
-    </div>
-    <div class="topbar-right">
       <div class="theme-toggle" role="radiogroup" aria-label="테마 선택">
         <button class="theme-toggle-btn" id="btnThemeDark" type="button" role="radio" aria-checked="false" data-theme-value="dark" title="다크 테마로 전환">다크</button>
         <button class="theme-toggle-btn" id="btnThemeLight" type="button" role="radio" aria-checked="false" data-theme-value="light" title="라이트 테마로 전환">라이트</button>
       </div>
-      <button class="top-btn" id="btnEdit">수정</button>
-      <button class="top-btn danger" id="btnDelete">삭제</button>
+    </div>
+    <div class="topbar-center">
+      <span class="breadcrumb-name" id="breadcrumbName">hot1.jpg</span>
+    </div>
+    <div class="topbar-right">
+      <button class="top-btn" id="btnClosePopup" type="button">닫기</button>
     </div>
   </div>
 
@@ -930,7 +905,6 @@ function updateImageMeta(data = {}) {
   document.getElementById('imgDescText').textContent = desc;
   document.getElementById('imgUrlText').textContent = url;
   document.getElementById('breadcrumbName').textContent = url.split('/').pop();
-  document.querySelector('.breadcrumb').textContent = 'ref /';
 
   const tagWrap = document.getElementById('imgTagsText');
   tagWrap.innerHTML = '';
@@ -1272,6 +1246,14 @@ document.querySelectorAll('.theme-toggle-btn').forEach((btn) => {
     applyTheme(nextTheme);
     localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
   };
+});
+
+document.getElementById('btnClosePopup')?.addEventListener('click', () => {
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage({ type: 'close-pose-popup' }, '*');
+    return;
+  }
+  window.close();
 });
 
 document.getElementById('confSlider').oninput = (e) => {
