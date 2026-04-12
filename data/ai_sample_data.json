@@ -1,85 +1,66 @@
 {
-  "imgTitle": "하이앵글 컵포즈",
-  "imgDesc": "위에서 아래를 극단적으로 내려다보는 하이 앵글(High Angle)로 촬영하여, 얼굴을 가린 컵을 강조하고 신체 비율을 독특하게 왜곡한 구도입니다.",
-  "imgUrl": "./asset/cup-pose.png",
-  "imgCategory": ["하이앵글", "MZ포즈", "일상", "OOTD", "얼굴가리기"],
-  "refAnalysisOnly": {
-    "refInput": {
-      "imagePath": "/legacy/hot1.jpg",
-      "imageSize": {
-        "width": 736.0,
-        "height": 981.0
-      },
-      "cameraPosition": "unspecified",
-      "aspectRatio": "4:3"
+  "refImg": {
+    "path": "asset/cup-pose.png",
+    "id": "img12345",
+    "imgTitle": "하이앵글 컵포즈",
+    "imgDesc": "위에서 아래를 극단적으로 내려다보는 하이 앵글(High Angle)로 촬영하여, 얼굴을 가린 컵을 강조하고 신체 비율을 독특하게 왜곡한 구도입니다.",
+    "imgUrl": "./asset/cup-pose.png",
+    "imgCategory": ["하이앵글", "MZ포즈", "일상", "OOTD", "얼굴가리기"]
+  },
+  "refData": {
+    "aspectRatio": "16:9",
+    "size": {
+      "w": 736.0,
+      "h": 981.0
     },
-    "analysisModulesUsed": [
-      "EXIFModule",
-      "GeoCalibModule",
-      "DepthModule",
-      "FocalLengthModule",
-      "DistanceModule",
-      "FramingModule",
-      "BBoxModule",
-      "SilhouetteModule",
-      "CompositionModule"
-    ],
-    "exifInfo": {
-      "focalLength": 8.0,
-      "focalLength35mm": 52.0,
-      "aperture": 1.8,
-      "iso": 80,
-      "exposureTime": 0.008,
-      "lensModel": "iPhone Back Camera 6.86mm f/1.78"
-    },
-    "geoCalibResult": {
-      "vfovDegrees": 65.0,
-      "rollDegrees": 0.5,
-      "pitchDegrees": -65.2,
-      "focalLength35mm": 24.0,
+    "bbox": "0f0a071c09f618ce",
+    "keypoints": "13ec0af007d014b40a2807d013240a2807d015e00a8c07d011f80a8c07d01964106823280ed810682328189c17701f400af014b42328189c19001f4011300fa0232815e018381f4011f818381f40157c1c841f4011f81c841f4015181e781f4012c01e781f4015181f401f4014501fa41f40157c1fa41f4012c01f401f4013881fa41f40125c1fa41f40170c0a8c138817080ae8138816fe0b43138816ed0b9d138816d50bf5138816b80c49138816940c9a1388166a0ce61388163b0d2d138816060d6f138815ce0daa138815910dde138815500e0b1388150c0e30138814c60e4d1388147e0e62138814350e6f138813ec0e74138813a20e6f138813590e62138813110e4d138812cb0e30138812870e0b138812460dde138812090daa138811d10d6f1388119c0d2d1388116d0ce6138811430c9a1388111f0c49138811020bf5138810ea0b9d138810d90b43138810cf0ae8138810cc0a8c138810cf0a2f138810d909d4138810ea097a1388110209221388111f08ce13881143087d1388116d08311388119c07ea138811d107a813881209076d13881246073913881287070c138812cb06e71388131106ca1388135906b5138813a206a8138813ec06a41388143506a81388147e06b5138814c606ca1388150c06e713881550070c138815910739138815ce076d1388160607a81388163b07ea1388166a083113881694087d138816b808ce138816d50922138816ed097a138816fe09d4138817080a2f1388189c19001b5818ce19001b58190019001b58193219001b58196419001b58189c19321b5818ce19321b58190019321b58193219321b58196419321b58189c19641b5818ce19641b58190019641b58193219641b58196419641b58189c19961b5818ce19961b58190019961b58193219961b58196419961b58189c19c81b5811300fa0232811620fa0232811940fa0232811c60fa0232811f80fa0232811300f6e232811620f6e232811940f6e232811c60f6e232811f80f6e232811300f3c232811620f3c232811940f3c232811c60f3c232811f80f3c232811300f0a232811620f0a232811940f0a232811c60f0a232811f80f0a232811300ed82328",
+    "geoCalib": {
+      "pitchDegrees": -15.3,
+      "rollDegrees": 0.8,
+      "vfovDegrees": 48.5,
+      "focalLengthMM": 50,
+      "focalLengthPx": 1520,
       "convergedAtStep": 12,
-      "finalCost": 0.00015
+      "finalCost": 0.003
     },
-    "depthResult": {
-      "compressionIndex": 0.85,
-      "depthMap": null
+    "depth": {
+      "compressionIndex": 0.35
+    },
+    "exif": {
+      "focalLength": 6.86,
+      "focalLengthMM": 52,
+      "aperture": 1.8,
+      "iso": 100,
+      "exposureTime": 0.008,
+      "lensModel": "iPhone 15 Pro back cam 6.86mm f/1.78"
     },
     "focalLengthInfo": {
-      "focalLength35mm": 52,
+      "focalLengthMM": 52,
       "source": "exif",
-      "confidence": 1.0,
+      "confidence": 0.95,
       "lensType": "normal"
     },
-    "distanceEstimation": {
-      "shoulderRatio": 0.182,
-      "estimatedDistanceM": 2.35,
-      "bodyTypeAssumption": "medium"
-    },
-    "framingResult": {
-      "shotType": "fullShot",
-      "shotTypeConfidence": 0.92,
-      "headroom": 0.18,
+    "estimatedDistance": 2.5,
+    "shoulderRatio": 0.28,
+    "shotType": "mediumShot",
+    "framing": {
+      "headroom": 0.12,
       "optimalHeadroom": 0.1,
-      "headroomStatus": "loose",
-      "gazeDirection": "downward",
-      "leadRoom": null,
-      "leadRoomStatus": null,
-      "cameraAngle": "highAngle",
-      "cameraAngleValue": -65.0,
-      "bodyCoverage": 0.65,
-      "nosePosition": {
-        "x": 0.512,
-        "y": 0.325
-      },
-      "croppingViolations": [],
-      "overallScore": 0.88
+      "headroomStatus": "optimal",
+      "leadRoom": 0.15,
+      "gazeDirection": "left",
+      "bodyCoverage": 0.48,
+      "camAngle": "eyeLevel", 
+      "camAngleValue": -2.1,
+      "croppingViolations": []
     },
-    "BBox": "0f0a071c09f618ce",
-    "poseKeypoints": {
-      "count": 133,
-      "indexRange": "0..132",
-      "format": "normalized_xy_confidence",
-        "kp": "13ec0af007d014b40a2807d013240a2807d015e00a8c07d011f80a8c07d01964106823280ed810682328189c17701f400af014b42328189c19001f4011300fa0232815e018381f4011f818381f40157c1c841f4011f81c841f4015181e781f4012c01e781f4015181f401f4014501fa41f40157c1fa41f4012c01f401f4013881fa41f40125c1fa41f40170c0a8c138817080ae8138816fe0b43138816ed0b9d138816d50bf5138816b80c49138816940c9a1388166a0ce61388163b0d2d138816060d6f138815ce0daa138815910dde138815500e0b1388150c0e30138814c60e4d1388147e0e62138814350e6f138813ec0e74138813a20e6f138813590e62138813110e4d138812cb0e30138812870e0b138812460dde138812090daa138811d10d6f1388119c0d2d1388116d0ce6138811430c9a1388111f0c49138811020bf5138810ea0b9d138810d90b43138810cf0ae8138810cc0a8c138810cf0a2f138810d909d4138810ea097a1388110209221388111f08ce13881143087d1388116d08311388119c07ea138811d107a813881209076d13881246073913881287070c138812cb06e71388131106ca1388135906b5138813a206a8138813ec06a41388143506a81388147e06b5138814c606ca1388150c06e713881550070c138815910739138815ce076d1388160607a81388163b07ea1388166a083113881694087d138816b808ce138816d50922138816ed097a138816fe09d4138817080a2f1388189c19001b5818ce19001b58190019001b58193219001b58196419001b58189c19321b5818ce19321b58190019321b58193219321b58196419321b58189c19641b5818ce19641b58190019641b58193219641b58196419641b58189c19961b5818ce19961b58190019961b58193219961b58196419961b58189c19c81b5811300fa0232811620fa0232811940fa0232811c60fa0232811f80fa0232811300f6e232811620f6e232811940f6e232811c60f6e232811f80f6e232811300f3c232811620f3c232811940f3c232811c60f3c232811f80f3c232811300f0a232811620f0a232811940f0a232811c60f0a232811f80f0a232811300ed82328"
+    "compositionType": "ruleOfThirdsLeftUpper",
+    "silhouette": {
+      "silhouetteImage": "<CGImage binary>",
+      "frameRatio": 0.72,
+      "segmentationBackend": "MobileSAM",
+      "maskConfidence": 0.92
     }
   }
 }
