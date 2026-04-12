@@ -5,6 +5,29 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>포즈 레퍼런스 이미지 상세</title>
   <link rel="stylesheet" href="../assets/admin.css">
+  <style>
+    .detail-form {
+      padding: 12px;
+      display: grid;
+      gap: 12px;
+    }
+    .detail-field {
+      display: grid;
+      gap: 6px;
+    }
+    .detail-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .detail-ai-section {
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+      margin-top: 2px;
+      display: grid;
+      gap: 12px;
+    }
+  </style>
 </head>
 <body>
   <div class="shell">
@@ -23,11 +46,15 @@
     <main class="main">
       <div class="page-head">
         <div>
-          <h1>포즈 레퍼런스 이미지 상세</h1>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <a href="./ref-img-gallery.html" style="font-size:24px; font-weight:700; color:var(--muted); text-decoration:none;">목록</a>
+            <span style="font-size:24px; color:var(--muted);">|</span>
+            <h1 style="margin:0;">포즈 레퍼런스 이미지 상세</h1>
+          </div>
           <p>메타 데이터(title, desc, tag, bookmark) 관리 화면입니다.</p>
         </div>
         <div class="actions">
-          <button class="btn" id="openAiData">AI 데이터 상세 팝업</button>
+          <button class="btn" type="button" style="border-color:#fecaca; color:#b91c1c; background:#fef2f2;">삭제</button>
           <button class="btn primary">저장</button>
         </div>
       </div>
@@ -45,16 +72,35 @@
 
         <div class="panel">
           <div class="panel-head"><h2>메타 데이터</h2></div>
-          <div style="padding:12px; display:grid; gap:10px;">
-            <label>Title<input class="input" style="width:100%;" value="하이앵글 컵포즈"></label>
-            <label>Description<textarea class="input" style="width:100%; min-height:90px;">위에서 아래를 내려다본 하이앵글 구성으로 컵을 강조한 샷</textarea></label>
-            <label>Tags<input class="input" style="width:100%;" value="#하이앵글, #MZ포즈, #OOTD"></label>
-            <label>Bookmark
-              <select class="input" style="width:100%;">
-                <option>미등록</option>
-                <option selected>북마크됨</option>
-              </select>
-            </label>
+          <div class="detail-form">
+            <div class="detail-field">
+              <label class="detail-label" for="titleInput">Title</label>
+              <input class="input" id="titleInput" style="width:100%;" value="하이앵글 컵포즈">
+            </div>
+            <div class="detail-field">
+              <label class="detail-label" for="descInput">Description</label>
+              <textarea class="input" id="descInput" style="width:100%; min-height:90px;">위에서 아래를 내려다본 하이앵글 구성으로 컵을 강조한 샷</textarea>
+            </div>
+            <div class="detail-field">
+              <label class="detail-label" for="tagsInput">Tags</label>
+              <input class="input" id="tagsInput" style="width:100%;" value="#하이앵글, #MZ포즈, #OOTD">
+            </div>
+            <div class="detail-field">
+              <label class="detail-label" for="bookmarkCountInput">북마크 수</label>
+              <input class="input" id="bookmarkCountInput" style="width:100%;" type="number" min="0" value="128">
+            </div>
+
+            <div class="detail-ai-section">
+              <div class="detail-field">
+                <label class="detail-label" for="aiJsonFile">AI 데이터(JSON)</label>
+                <input class="input" id="aiJsonFile" style="width:100%;" type="file" accept=".json,application/json">
+              </div>
+              <div style="display:flex; gap:8px; justify-content:flex-end;">
+                <button class="btn" id="openAiDataBottom" type="button">AI 데이터 상세 팝업</button>
+                <button class="btn primary" id="uploadAiJson" type="button">파일 업로드</button>
+              </div>
+              <div id="aiJsonFileName" style="font-size:12px; color:var(--muted);">선택된 파일 없음</div>
+            </div>
           </div>
         </div>
       </div>
@@ -78,7 +124,7 @@
     const overlay = document.getElementById('posePopupOverlay');
     const frame   = document.getElementById('posePopupFrame');
 
-    document.getElementById('openAiData').addEventListener('click', () => {
+    document.getElementById('openAiDataBottom').addEventListener('click', () => {
       frame.src = './ref-img-detail-pose.html';
       overlay.style.display = 'flex';
       document.body.style.overflow = 'hidden';
@@ -95,6 +141,24 @@
 
     window.addEventListener('message', (e) => {
       if (e?.data?.type === 'close-pose-popup') closePopup();
+    });
+
+    const aiJsonFileInput = document.getElementById('aiJsonFile');
+    const aiJsonFileName = document.getElementById('aiJsonFileName');
+    const uploadAiJsonBtn = document.getElementById('uploadAiJson');
+
+    aiJsonFileInput.addEventListener('change', (e) => {
+      const file = e.target.files?.[0];
+      aiJsonFileName.textContent = file ? `선택 파일: ${file.name}` : '선택된 파일 없음';
+    });
+
+    uploadAiJsonBtn.addEventListener('click', () => {
+      const file = aiJsonFileInput.files?.[0];
+      if (!file) {
+        aiJsonFileName.textContent = '업로드할 JSON 파일을 선택해주세요.';
+        return;
+      }
+      aiJsonFileName.textContent = `업로드 준비 완료: ${file.name}`;
     });
   </script>
 </body>
