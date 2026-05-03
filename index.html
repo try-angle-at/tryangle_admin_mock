@@ -1,41 +1,130 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Admin Mock - 홈</title>
+  <title>TryAngle Admin Dashboard</title>
   <link rel="stylesheet" href="./assets/admin.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0">
 </head>
 <body>
   <div class="shell">
     <aside class="sidebar">
-      <div class="brand">TryAngle Admin</div>
+      <div class="brand" style="display:flex;align-items:center;gap:8px;">
+        <span class="icon">dashboard_customize</span>
+        TryAngle Admin
+      </div>
+      <div class="nav-title">메인</div>
+      <ul class="nav-list">
+        <li><a class="active" href="./index.html"><span class="icon sm" style="margin-right:8px;">grid_view</span>대시보드</a></li>
+      </ul>
       <div class="nav-title">데이터 관리</div>
       <ul class="nav-list">
-        <li><a href="./realtime/realtime-list.html">실시간 로그 데이터 목록</a></li>
+        <li><a href="./realtime/realtime-list.html"><span class="icon sm" style="margin-right:8px;">analytics</span>실시간 로그 데이터 목록</a></li>
       </ul>
-      <div class="nav-title">컨텐츠 관리</div>
+      <div class="nav-title">콘텐츠 관리</div>
       <ul class="nav-list">
-        <li><a href="./content/ref-img-gallery.html">포즈 레퍼런스 이미지 목록</a></li>
+        <li><a href="./content/ref-img-gallery.html"><span class="icon sm" style="margin-right:8px;">image</span>포즈 레퍼런스 이미지 목록</a></li>
       </ul>
     </aside>
 
-    <main class="main">
-      <div class="page-head">
-        <div>
-          <h1>관리자 목업 페이지</h1>
-          <p>요청하신 IA를 기준으로 데이터/컨텐츠 관리 화면을 빠르게 확인할 수 있는 구조입니다.</p>
+    <main style="overflow:auto;background:var(--bg);">
+      <header class="top-nav">
+        <div class="header-search">
+          <span class="icon" style="color:var(--muted);">search</span>
+          <input type="text" placeholder="Search systems...">
         </div>
-      </div>
+        <div class="right">
+          <button class="icon-btn" aria-label="Notifications" style="position:relative;">
+            <span class="icon">notifications</span>
+            <span class="notification-dot"></span>
+          </button>
+          <button class="icon-btn" aria-label="Help">
+            <span class="icon">help_outline</span>
+          </button>
+          <div class="top-divider"></div>
+          <button class="btn primary"><span class="icon sm" style="margin-right:6px;">add</span>Create Task</button>
+        </div>
+      </header>
 
-      <div class="grid">
-        <div class="card"><div class="label">포즈 데이터(전체)</div><div class="value">12,580</div></div>
-        <div class="card"><div class="label">디바이스 유형</div><div class="value">8</div></div>
-        <div class="card"><div class="label">레퍼런스 이미지</div><div class="value">2,134</div></div>
-        <div class="card"><div class="label">오늘 오류 로그</div><div class="value">37</div></div>
-      </div>
+      <section class="dashboard-wrap">
+        <div class="toolbar">
+          <div class="toolbar-group">
+            <button class="chip-btn"><span class="icon sm">calendar_today</span>Last 30 Days</button>
+            <button class="chip-btn"><span class="icon sm">filter_list</span>Filters</button>
+          </div>
+          <button class="btn" style="color:var(--info);"><span class="icon sm" style="margin-right:4px;">restart_alt</span>Reset All</button>
+        </div>
 
+        <div class="grid grid-3">
+          <div class="card">
+            <div class="card-top">
+              <span class="stat-icon"><span class="icon">payments</span></span>
+              <span class="delta success"><span class="icon sm">trending_up</span>+12.5%</span>
+            </div>
+            <div class="label">Net Revenue</div>
+            <div class="value">$84,230.00</div>
+          </div>
+          <div class="card">
+            <div class="card-top">
+              <span class="stat-icon" style="background:rgba(241,49,49,0.12);color:var(--error);"><span class="icon">error_outline</span></span>
+              <span class="delta error">High Priority</span>
+            </div>
+            <div class="label">System Alerts</div>
+            <div class="value">3 Active</div>
+          </div>
+          <div class="card">
+            <div class="card-top">
+              <span class="stat-icon" style="background:rgba(0,95,255,0.12);color:var(--info);"><span class="icon">info</span></span>
+              <span class="delta info">Pending</span>
+            </div>
+            <div class="label">Pending Updates</div>
+            <div class="value">12 Tasks</div>
+          </div>
+        </div>
 
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Task Overview</h2>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Task Name</th>
+                <th>Assignee</th>
+                <th style="text-align:center;">Status</th>
+                <th style="text-align:right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Dashboard Redesign</td>
+                <td><span class="avatar-dot">AK</span>Alex Kim</td>
+                <td style="text-align:center;"><span class="badge success badge-row"><span class="icon sm">check_circle</span>COMPLETE</span></td>
+                <td style="text-align:right;">
+                  <span class="table-actions">
+                    <button class="icon-btn" aria-label="Edit"><span class="icon sm">edit</span></button>
+                    <button class="icon-btn" aria-label="Delete" style="color:var(--error);"><span class="icon sm">delete</span></button>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>API Integration</td>
+                <td><span class="avatar-dot">JM</span>Justin Mason</td>
+                <td style="text-align:center;"><span class="badge info badge-row"><span class="icon sm">sync</span>IN PROGRESS</span></td>
+                <td style="text-align:right;">
+                  <span class="table-actions">
+                    <button class="icon-btn" aria-label="Edit"><span class="icon sm">edit</span></button>
+                    <button class="icon-btn" aria-label="Delete" style="color:var(--error);"><span class="icon sm">delete</span></button>
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
     </main>
   </div>
 </body>

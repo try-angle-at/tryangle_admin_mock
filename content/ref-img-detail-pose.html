@@ -4,71 +4,73 @@
   <meta charset="UTF-8">
   <title>Pose Studio — Detail View</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg:         #0a0a0c;
-      --bg-panel:   #111114;
-      --bg-card:    #18181c;
-      --bg-hover:   #202026;
-      --border:     rgba(255,255,255,0.07);
-      --border-act: rgba(255,255,255,0.18);
-      --text-1:     #f0f0f2;
-      --text-2:     #9090a0;
-      --text-3:     #55555f;
-      --accent:     #6ee7b7;
-      --accent-dim: rgba(110,231,183,0.12);
-      --accent-2:   #818cf8;
-      --amber:      #fbbf24;
-      --amber-dim:  rgba(251,191,36,0.12);
-      --red:        #f87171;
-      --red-dim:    rgba(248,113,113,0.1);
+      --bg:         #111111;
+      --bg-panel:   #262524;
+      --bg-card:    #31302f;
+      --bg-hover:   #3a3938;
+      --border:     rgba(224,223,222,0.25);
+      --border-act: rgba(224,223,222,0.5);
+      --text-1:     #ffffff;
+      --text-2:     #c9c8c7;
+      --text-3:     #969492;
+      --accent:     #fddb00;
+      --accent-dim: rgba(253,219,0,0.12);
+      --accent-2:   #005fff;
+      --amber:      #008442;
+      --amber-dim:  rgba(0,132,66,0.12);
+      --red:        #f13131;
+      --red-dim:    rgba(241,49,49,0.1);
       --mono:       'Space Mono', monospace;
-      --sans:       'DM Sans', sans-serif;
+      --sans:       'Pretendard', 'Noto Sans KR', sans-serif;
       --r:          10px;
       --r-sm:       6px;
       --panel-w:    300px;
 
-      --canvas-bg:  #06060a;
-      --canvas-grid: rgba(255,255,255,0.025);
-      --glass-bg:   rgba(6,6,10,0.82);
-      --glass-bg-strong: rgba(6,6,10,0.9);
-      --glass-border: rgba(255,255,255,0.07);
-      --input-track: rgba(255,255,255,0.12);
-      --chip-bg: rgba(255,255,255,0.02);
-      --chip-bg-active: rgba(255,255,255,0.05);
-      --control-pill-bg: rgba(6,6,10,0.85);
-      --loading-track: rgba(255,255,255,0.08);
+      --canvas-bg:  #111111;
+      --canvas-grid: rgba(224,223,222,0.06);
+      --glass-bg:   rgba(38,37,36,0.9);
+      --glass-bg-strong: rgba(38,37,36,0.95);
+      --glass-border: rgba(224,223,222,0.2);
+      --input-track: rgba(224,223,222,0.2);
+      --chip-bg: rgba(255,255,255,0.04);
+      --chip-bg-active: rgba(255,255,255,0.08);
+      --control-pill-bg: rgba(38,37,36,0.92);
+      --loading-track: rgba(224,223,222,0.16);
     }
 
     :root[data-theme="light"] {
-      --bg:         #f6f8fc;
+      --bg:         #f5f5f5;
       --bg-panel:   #ffffff;
-      --bg-card:    #f2f5fa;
-      --bg-hover:   #e8edf5;
-      --border:     rgba(15,23,42,0.12);
-      --border-act: rgba(15,23,42,0.24);
-      --text-1:     #0f172a;
-      --text-2:     #475569;
-      --text-3:     #64748b;
-      --accent:     #059669;
-      --accent-dim: rgba(5,150,105,0.12);
-      --accent-2:   #4f46e5;
-      --amber:      #b45309;
-      --amber-dim:  rgba(180,83,9,0.12);
-      --red:        #dc2626;
-      --red-dim:    rgba(220,38,38,0.08);
+      --bg-card:    #efefef;
+      --bg-hover:   #e0dfde;
+      --border:     rgba(87,85,84,0.24);
+      --border-act: rgba(87,85,84,0.4);
+      --text-1:     #111111;
+      --text-2:     #575554;
+      --text-3:     #797775;
+      --accent:     #fddb00;
+      --accent-dim: rgba(253,219,0,0.2);
+      --accent-2:   #005fff;
+      --amber:      #008442;
+      --amber-dim:  rgba(0,132,66,0.14);
+      --red:        #f13131;
+      --red-dim:    rgba(241,49,49,0.12);
 
-      --canvas-bg:  #eef3fb;
-      --canvas-grid: rgba(15,23,42,0.05);
-      --glass-bg:   rgba(255,255,255,0.88);
-      --glass-bg-strong: rgba(255,255,255,0.95);
-      --glass-border: rgba(15,23,42,0.14);
-      --input-track: rgba(15,23,42,0.18);
-      --chip-bg: rgba(15,23,42,0.03);
-      --chip-bg-active: rgba(15,23,42,0.07);
-      --control-pill-bg: rgba(255,255,255,0.92);
-      --loading-track: rgba(15,23,42,0.15);
+      --canvas-bg:  #ffffff;
+      --canvas-grid: rgba(87,85,84,0.05);
+      --glass-bg:   rgba(255,255,255,0.92);
+      --glass-bg-strong: rgba(255,255,255,0.97);
+      --glass-border: rgba(87,85,84,0.18);
+      --input-track: rgba(87,85,84,0.18);
+      --chip-bg: rgba(17,17,17,0.03);
+      --chip-bg-active: rgba(17,17,17,0.06);
+      --control-pill-bg: rgba(255,255,255,0.95);
+      --loading-track: rgba(87,85,84,0.12);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }

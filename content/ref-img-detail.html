@@ -1,10 +1,13 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>포즈 레퍼런스 이미지 상세</title>
   <link rel="stylesheet" href="../assets/admin.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0">
   <style>
     .detail-form {
       padding: 12px;
@@ -32,30 +35,37 @@
 <body>
   <div class="shell">
     <aside class="sidebar">
-      <div class="brand">TryAngle Admin</div>
+      <div class="brand" style="display:flex;align-items:center;gap:8px;">
+        <span class="icon">dashboard_customize</span>
+        TryAngle Admin
+      </div>
+      <div class="nav-title">메인</div>
+      <ul class="nav-list">
+        <li><a href="../index.html"><span class="icon sm" style="margin-right:8px;">grid_view</span>대시보드</a></li>
+      </ul>
       <div class="nav-title">데이터 관리</div>
       <ul class="nav-list">
-        <li><a href="../realtime/realtime-list.html">실시간 로그 데이터 목록</a></li>
+        <li><a href="../realtime/realtime-list.html"><span class="icon sm" style="margin-right:8px;">analytics</span>실시간 로그 데이터 목록</a></li>
       </ul>
       <div class="nav-title">컨텐츠 관리</div>
       <ul class="nav-list">
-        <li><a class="active" href="./ref-img-gallery.html">포즈 레퍼런스 이미지 목록</a></li>
+        <li><a class="active" href="./ref-img-gallery.html"><span class="icon sm" style="margin-right:8px;">image</span>포즈 레퍼런스 이미지 목록</a></li>
       </ul>
     </aside>
 
     <main class="main">
       <div class="page-head">
         <div>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <a href="./ref-img-gallery.html" style="font-size:24px; font-weight:700; color:var(--muted); text-decoration:none;">목록</a>
-            <span style="font-size:24px; color:var(--muted);">|</span>
-            <h1 style="margin:0;">포즈 레퍼런스 이미지 상세</h1>
+          <div class="breadcrumb-head">
+            <a href="./ref-img-gallery.html" class="breadcrumb-link">목록</a>
+            <span class="breadcrumb-sep">|</span>
+            <h1>포즈 레퍼런스 이미지 상세</h1>
           </div>
           <p>메타 데이터(title, desc, tag, bookmark) 관리 화면입니다.</p>
         </div>
         <div class="actions">
-          <button class="btn" type="button" style="border-color:#fecaca; color:#b91c1c; background:#fef2f2;">삭제</button>
-          <button class="btn primary">저장</button>
+          <button class="btn danger" type="button"><span class="icon sm" style="margin-right:6px;">delete</span>삭제</button>
+          <button class="btn primary"><span class="icon sm" style="margin-right:6px;">save</span>저장</button>
         </div>
       </div>
 
@@ -63,9 +73,9 @@
         <div class="panel" style="padding:12px;">
           <div class="thumb" style="overflow:hidden;">
             <img
+              class="thumb-cover"
               src="https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/hot1.jpg"
               alt="hot1"
-              style="width:100%;height:100%;object-fit:cover;display:block;"
             >
           </div>
         </div>
@@ -75,29 +85,29 @@
           <div class="detail-form">
             <div class="detail-field">
               <label class="detail-label" for="titleInput">Title</label>
-              <input class="input" id="titleInput" style="width:100%;" value="하이앵글 컵포즈">
+              <input class="input full" id="titleInput" value="하이앵글 컵포즈">
             </div>
             <div class="detail-field">
               <label class="detail-label" for="descInput">Description</label>
-              <textarea class="input" id="descInput" style="width:100%; min-height:90px;">위에서 아래를 내려다본 하이앵글 구성으로 컵을 강조한 샷</textarea>
+              <textarea class="input full" id="descInput" style="min-height:90px;">위에서 아래를 내려다본 하이앵글 구성으로 컵을 강조한 샷</textarea>
             </div>
             <div class="detail-field">
               <label class="detail-label" for="tagsInput">Tags</label>
-              <input class="input" id="tagsInput" style="width:100%;" value="#하이앵글, #MZ포즈, #OOTD">
+              <input class="input full" id="tagsInput" value="#하이앵글, #MZ포즈, #OOTD">
             </div>
             <div class="detail-field">
               <label class="detail-label" for="bookmarkCountInput">북마크 수</label>
-              <input class="input" id="bookmarkCountInput" style="width:100%;" type="number" min="0" value="128">
+              <input class="input full" id="bookmarkCountInput" type="number" min="0" value="128">
             </div>
 
             <div class="detail-ai-section">
               <div class="detail-field">
                 <label class="detail-label" for="aiJsonFile">AI 데이터(JSON)</label>
-                <input class="input" id="aiJsonFile" style="width:100%;" type="file" accept=".json,application/json">
+                <input class="input full" id="aiJsonFile" type="file" accept=".json,application/json">
               </div>
               <div style="display:flex; gap:8px; justify-content:flex-end;">
-                <button class="btn" id="openAiDataBottom" type="button">AI 데이터 상세 팝업</button>
-                <button class="btn primary" id="uploadAiJson" type="button">파일 업로드</button>
+                <button class="btn" id="openAiDataBottom" type="button"><span class="icon sm" style="margin-right:6px;">open_in_new</span>AI 데이터 상세 팝업</button>
+                <button class="btn primary" id="uploadAiJson" type="button"><span class="icon sm" style="margin-right:6px;">upload_file</span>파일 업로드</button>
               </div>
               <div id="aiJsonFileName" style="font-size:12px; color:var(--muted);">선택된 파일 없음</div>
             </div>
@@ -108,21 +118,15 @@
     </main>
   </div>
 
-  <!-- iframe 팝업 오버레이 -->
-  <div id="posePopupOverlay" style="
-    display:none; position:fixed; inset:0; z-index:9999;
-    background:rgba(0,0,0,0.72); backdrop-filter:blur(4px);
-    align-items:center; justify-content:center;">
-    <div style="
-      position:relative; width:92vw; height:92vh; max-width:1400px;
-      border-radius:12px; overflow:hidden; box-shadow:0 24px 80px rgba(0,0,0,0.6);">
+  <div id="posePopupOverlay" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(17,17,17,0.72); backdrop-filter:blur(4px); align-items:center; justify-content:center;">
+    <div style="position:relative; width:92vw; height:92vh; max-width:1400px; border-radius:12px; overflow:hidden; box-shadow:0 24px 80px rgba(0,0,0,0.6);">
       <iframe id="posePopupFrame" src="" style="width:100%;height:100%;border:none;display:block;"></iframe>
     </div>
   </div>
 
   <script>
     const overlay = document.getElementById('posePopupOverlay');
-    const frame   = document.getElementById('posePopupFrame');
+    const frame = document.getElementById('posePopupFrame');
 
     document.getElementById('openAiDataBottom').addEventListener('click', () => {
       frame.src = './ref-img-detail-pose.html';

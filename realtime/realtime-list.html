@@ -1,22 +1,32 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>실시간 로그 데이터 목록</title>
   <link rel="stylesheet" href="../assets/admin.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0">
 </head>
 <body>
   <div class="shell">
     <aside class="sidebar">
-      <div class="brand">TryAngle Admin</div>
+      <div class="brand" style="display:flex;align-items:center;gap:8px;">
+        <span class="icon">dashboard_customize</span>
+        TryAngle Admin
+      </div>
+      <div class="nav-title">메인</div>
+      <ul class="nav-list">
+        <li><a href="../index.html"><span class="icon sm" style="margin-right:8px;">grid_view</span>대시보드</a></li>
+      </ul>
       <div class="nav-title">데이터 관리</div>
       <ul class="nav-list">
-        <li><a class="active" href="./realtime-list.html">실시간 로그 데이터 목록</a></li>
+        <li><a class="active" href="./realtime-list.html"><span class="icon sm" style="margin-right:8px;">analytics</span>실시간 로그 데이터 목록</a></li>
       </ul>
       <div class="nav-title">컨텐츠 관리</div>
       <ul class="nav-list">
-        <li><a href="../content/ref-img-gallery.html">포즈 레퍼런스 이미지 목록</a></li>
+        <li><a href="../content/ref-img-gallery.html"><span class="icon sm" style="margin-right:8px;">image</span>포즈 레퍼런스 이미지 목록</a></li>
       </ul>
     </aside>
 
@@ -27,7 +37,7 @@
           <p>최근 수집된 포즈 데이터와 AI 추론 결과를 확인할 수 있습니다.</p>
         </div>
         <div class="actions">
-          <button class="btn" type="button">필터 초기화</button>
+          <button class="btn" type="button"><span class="icon sm" style="margin-right:6px;">restart_alt</span>필터 초기화</button>
         </div>
       </div>
 
@@ -85,7 +95,7 @@
               <td>hot1.jpg</td>
               <td>0.92</td>
               <td>2026-04-12 11:02:04</td>
-              <td><span class="badge">촬영중</span></td>
+              <td><span class="badge info">촬영중</span></td>
               <td><a class="btn" href="./realtime-detail.html">상세보기</a></td>
               <td><button class="btn" type="button">내보내기</button></td>
             </tr>
@@ -96,7 +106,7 @@
               <td>hot2.jpg</td>
               <td>0.89</td>
               <td>2026-04-12 11:01:47</td>
-              <td><span class="badge">촬영중</span></td>
+              <td><span class="badge info">촬영중</span></td>
               <td><a class="btn" href="./realtime-detail.html">상세보기</a></td>
               <td><button class="btn" type="button">내보내기</button></td>
             </tr>
@@ -107,7 +117,7 @@
               <td>winter1.jpg</td>
               <td>0.95</td>
               <td>2026-04-12 11:01:31</td>
-              <td><span class="badge">완료</span></td>
+              <td><span class="badge success">완료</span></td>
               <td><a class="btn" href="./realtime-detail.html">상세보기</a></td>
               <td><button class="btn" type="button">내보내기</button></td>
             </tr>
@@ -118,7 +128,7 @@
               <td>landmark4.jpg</td>
               <td>0.62</td>
               <td>2026-04-12 11:01:16</td>
-              <td><span class="badge">완료</span></td>
+              <td><span class="badge success">완료</span></td>
               <td><a class="btn" href="./realtime-detail.html">상세보기</a></td>
               <td><button class="btn" type="button">내보내기</button></td>
             </tr>
@@ -129,7 +139,7 @@
               <td>winter8.jpg</td>
               <td>0.94</td>
               <td>2026-04-12 11:00:58</td>
-              <td><span class="badge">완료</span></td>
+              <td><span class="badge success">완료</span></td>
               <td><a class="btn" href="./realtime-detail.html">상세보기</a></td>
               <td><button class="btn" type="button">내보내기</button></td>
             </tr>
