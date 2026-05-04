@@ -264,7 +264,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-
     <div class="topbar-divider"></div>
     <div class="breadcrumb-wrap">
       <span class="breadcrumb">ref /</span>
-      <span class="breadcrumb-name">hot1.jpg</span>
+      <span class="breadcrumb-name">fullshot_1.jpg</span>
     </div>
   </div>
   <div class="topbar-right">
@@ -286,7 +286,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-
     </div>
     <div class="rmeta">
       <div class="rmeta-head">
-        <div class="rname" style="margin-bottom:0">hot1.jpg — 레퍼런스</div>
+        <div class="rname" style="margin-bottom:0">fullshot_1.jpg — 레퍼런스</div>
         <a href="../content/ref-img-detail-pose.html" class="reflink" title="레퍼런스 상세 보기">상세 &rsaquo;</a>
       </div>
       <div class="rmeta-sep"></div>
@@ -1248,7 +1248,7 @@ async function init(){
   applyCanvasAspect('1:1');
   drawRef();
   log('ok','DWPose 133kp 모델 로드 완료');
-  log('ok','레퍼런스 hot1.jpg 분석 완료');
+  log('ok','레퍼런스 fullshot_1.jpg 분석 완료');
   const cnt=await loadJsonlFeed();
   if(cnt>0) log('ok',`jsonl 프레임 로드: ${cnt}개`);
   log('ok','실시간 모니터링 시작');
