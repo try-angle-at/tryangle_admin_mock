@@ -82,6 +82,22 @@ window.__REFERENCE_DATA__ = {
       "url": "https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/ref/kneeshot_1.jpeg"
     },
     {
+      "fileName": "kneeshot_2.png",
+      "tags": ["legacy", "ref", "kneeshot"],
+      "title": "kneeshot 2 포즈 레퍼런스",
+      "description": "무릎 위 구도 레퍼런스 샘플 2입니다.",
+      "tagsText": "#legacy, #ref, #kneeshot",
+      "bookmarkCount": 0,
+      "useCnt": 0,
+      "expWeight": 0,
+      "priority": 0,
+      "mime": "image/png",
+      "storageClass": "Standard",
+      "size": "-",
+      "uploadedAt": "2026년 05월 05일",
+      "url": "https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/ref/kneeshot_2.png"
+    },
+    {
       "fileName": "waistshot_1.jpg",
       "tags": ["legacy", "ref", "waistshot"],
       "title": "waistshot 1 포즈 레퍼런스",
