@@ -716,7 +716,21 @@ function matchScore(lkps){
 ═══════════════════════════════════════════════ */
 const HIST=[];
 const HMAX=1000;
-const JSONL_PATH='../assets/data/realtime_img_sample.jsonl';
+const DEFAULT_JSONL_PATH='../assets/data/realtime_img_sample.jsonl';
+function resolveJsonlPath(){
+  try{
+    const p=new URLSearchParams(window.location.search).get('log');
+    if(!p) return DEFAULT_JSONL_PATH;
+    const t=p.trim();
+    if(!t) return DEFAULT_JSONL_PATH;
+    // Only allow local .jsonl files under ../assets/data
+    if(!/^\.\.\/assets\/data\/[a-zA-Z0-9._-]+\.jsonl$/.test(t)) return DEFAULT_JSONL_PATH;
+    return t;
+  }catch(_){
+    return DEFAULT_JSONL_PATH;
+  }
+}
+const JSONL_PATH=resolveJsonlPath();
 const SIM={
   frame:0,overlay:true,frozen:false,captureEnded:false,
   tilt:2,shoulder:.41,

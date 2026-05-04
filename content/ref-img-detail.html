@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>포즈 레퍼런스 이미지 상세</title>
+  <title>레퍼런스 이미지 관리</title>
   <link rel="stylesheet" href="../assets/admin.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,6 +30,13 @@
       display: grid;
       gap: 12px;
     }
+    .detail-db-section {
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+      margin-top: 2px;
+      display: grid;
+      gap: 12px;
+    }
   </style>
 </head>
 <body>
@@ -49,7 +56,7 @@
       </ul>
       <div class="nav-title">컨텐츠 관리</div>
       <ul class="nav-list">
-        <li><a class="active" href="./ref-img-gallery.html"><span class="icon sm" style="margin-right:8px;">image</span>포즈 레퍼런스 이미지 목록</a></li>
+        <li><a class="active" href="./ref-img-gallery.html"><span class="icon sm" style="margin-right:8px;">image</span>레퍼런스 이미지 관리</a></li>
       </ul>
     </aside>
 
@@ -59,7 +66,7 @@
           <div class="breadcrumb-head">
             <a href="./ref-img-gallery.html" class="breadcrumb-link">목록</a>
             <span class="breadcrumb-sep">|</span>
-            <h1>포즈 레퍼런스 이미지 상세</h1>
+            <h1>레퍼런스 이미지 관리</h1>
           </div>
           <p>메타 데이터(title, desc, tag, bookmark) 관리 화면입니다.</p>
         </div>
@@ -70,9 +77,10 @@
       </div>
 
       <div class="preview">
-        <div class="panel" style="padding:12px;">
+        <div class="panel" style="padding:12px; align-self:start;">
           <div class="thumb" style="overflow:hidden;">
             <img
+              id="detailPreviewImage"
               class="thumb-cover"
               src="https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/hot1.jpg"
               alt="hot1"
@@ -89,15 +97,43 @@
             </div>
             <div class="detail-field">
               <label class="detail-label" for="descInput">Description</label>
-              <textarea class="input full" id="descInput" style="min-height:90px;">위에서 아래를 내려다본 하이앵글 구성으로 컵을 강조한 샷</textarea>
+              <textarea class="input full" id="descInput" rows="3" style="resize:none;">위에서 아래를 내려다본 하이앵글 구성으로 컵을 강조한 샷</textarea>
             </div>
             <div class="detail-field">
               <label class="detail-label" for="tagsInput">Tags</label>
               <input class="input full" id="tagsInput" value="#하이앵글, #MZ포즈, #OOTD">
             </div>
-            <div class="detail-field">
-              <label class="detail-label" for="bookmarkCountInput">북마크 수</label>
-              <input class="input full" id="bookmarkCountInput" type="number" min="0" value="128">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div class="detail-field">
+                <label class="detail-label" for="bookmarkCountInput">북마크 수</label>
+                <input class="input full" id="bookmarkCountInput" type="number" min="0" value="128">
+              </div>
+              <div class="detail-field">
+                <label class="detail-label" for="useCntInput">사용횟수 (tb_img.useCnt)</label>
+                <input class="input full" id="useCntInput" type="number" min="0" value="0">
+              </div>
+            </div>
+
+            <div class="detail-db-section">
+              <div class="detail-field">
+                <label class="detail-label" for="expWeightInput">노출 가중치 (tb_img.expWeight)</label>
+                <input class="input full" id="expWeightInput" type="number" step="0.01" min="0" value="0">
+              </div>
+              <div class="detail-field">
+                <label class="detail-label" for="priorityInput">우선순위 (tb_img.pri)</label>
+                <input class="input full" id="priorityInput" type="number" min="0" value="0">
+              </div>
+            </div>
+
+            <div class="detail-db-section">
+              <div class="detail-field">
+                <label class="detail-label" for="fileSizeInput">파일 크기</label>
+                <input class="input full" id="fileSizeInput" readonly>
+              </div>
+              <div class="detail-field">
+                <label class="detail-label" for="uploadedAtInput">업로드 일시</label>
+                <input class="input full" id="uploadedAtInput" readonly>
+              </div>
             </div>
 
             <div class="detail-ai-section">
@@ -125,11 +161,60 @@
   </div>
 
   <script>
+    const LEGACY_BASE_URL = 'https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/';
+    const DEFAULT_IMAGE_FILE = 'hot1.jpg';
+    const DEFAULT_STORAGE_META = {
+      mime: 'image/jpeg',
+      storageClass: 'Standard',
+      size: '-',
+      uploadedAt: '-'
+    };
+    const STORAGE_FILE_META = {
+      '223012_ref.jpeg': { mime: 'image/jpeg', storageClass: 'Standard', size: '319.75 kB', uploadedAt: '2026-05-04 23:12:30 GMT+9' },
+      '223054_ref.jpeg': { mime: 'image/jpeg', storageClass: 'Standard', size: '247.91 kB', uploadedAt: '2026-05-04 23:12:30 GMT+9' },
+      '223203_ref.jpeg': { mime: 'image/jpeg', storageClass: 'Standard', size: '675.44 kB', uploadedAt: '2026-05-04 23:12:30 GMT+9' },
+      'hot1.jpg': { mime: 'image/jpeg', storageClass: 'Standard', size: '138.63 kB', uploadedAt: '2026-03-22 02:56:49 GMT+9' },
+      'hot2.jpg': { mime: 'image/jpeg', storageClass: 'Standard', size: '101.66 kB', uploadedAt: '2026-03-22 02:56:49 GMT+9' },
+      'hot3.jpg': { mime: 'image/jpeg', storageClass: 'Standard', size: '78.4 kB', uploadedAt: '2026-03-22 02:56:49 GMT+9' },
+      'landmark4.jpg': { mime: 'image/jpeg', storageClass: 'Standard', size: '164.1 kB', uploadedAt: '2026-03-22 02:56:49 GMT+9' },
+      'winter1.jpg': { mime: 'image/jpeg', storageClass: 'Standard', size: '-', uploadedAt: '-' }
+    };
+
+    function resolveImageFile() {
+      try {
+        const raw = new URLSearchParams(window.location.search).get('img');
+        const value = (raw || '').trim();
+        if (!value) return DEFAULT_IMAGE_FILE;
+        if (!/^[a-zA-Z0-9._-]+\.(jpg|jpeg|png|webp)$/i.test(value)) return DEFAULT_IMAGE_FILE;
+        return value;
+      } catch (_) {
+        return DEFAULT_IMAGE_FILE;
+      }
+    }
+
+    const selectedImageFile = resolveImageFile();
+    const previewImage = document.getElementById('detailPreviewImage');
+    if (previewImage) {
+      previewImage.src = `${LEGACY_BASE_URL}${selectedImageFile}`;
+      previewImage.alt = selectedImageFile.replace(/\.[^.]+$/, '');
+    }
+
+    const titleInput = document.getElementById('titleInput');
+    if (titleInput) {
+      titleInput.value = selectedImageFile;
+    }
+
+    const selectedMeta = STORAGE_FILE_META[selectedImageFile] || DEFAULT_STORAGE_META;
+    const fileSizeInput = document.getElementById('fileSizeInput');
+    const uploadedAtInput = document.getElementById('uploadedAtInput');
+    if (fileSizeInput) fileSizeInput.value = selectedMeta.size;
+    if (uploadedAtInput) uploadedAtInput.value = selectedMeta.uploadedAt;
+
     const overlay = document.getElementById('posePopupOverlay');
     const frame = document.getElementById('posePopupFrame');
 
     document.getElementById('openAiDataBottom').addEventListener('click', () => {
-      frame.src = './ref-img-detail-pose.html';
+      frame.src = `./ref-img-detail-pose.html?img=${encodeURIComponent(selectedImageFile)}`;
       overlay.style.display = 'flex';
       document.body.style.overflow = 'hidden';
     });

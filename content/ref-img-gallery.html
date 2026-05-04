@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>포즈 레퍼런스 이미지 목록</title>
+  <title>레퍼런스 이미지 관리</title>
   <link rel="stylesheet" href="../assets/admin.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,14 +56,14 @@
       </ul>
       <div class="nav-title">컨텐츠 관리</div>
       <ul class="nav-list">
-        <li><a class="active" href="./ref-img-gallery.html"><span class="icon sm" style="margin-right:8px;">image</span>포즈 레퍼런스 이미지 목록</a></li>
+        <li><a class="active" href="./ref-img-gallery.html"><span class="icon sm" style="margin-right:8px;">image</span>레퍼런스 이미지 관리</a></li>
       </ul>
     </aside>
 
     <main class="main">
       <div class="page-head">
         <div>
-          <h1>포즈 레퍼런스 이미지 목록</h1>
+          <h1>레퍼런스 이미지 관리</h1>
           <p>갤러리 형태로 레퍼런스 이미지를 탐색하고 상세 화면으로 이동합니다.</p>
         </div>
         <button class="btn primary"><span class="icon sm" style="margin-right:6px;">add</span>이미지 등록</button>
@@ -76,11 +76,35 @@
         </div>
         <div class="gallery">
           <article class="g-item">
+            <div class="g-thumb"><img class="thumb-cover" src="https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/223012_ref.jpeg" alt="223012_ref"></div>
+            <div class="g-meta">
+              <div class="g-title">223012_ref.jpeg</div>
+              <div class="g-tags">#legacy #ref</div>
+              <a class="g-link" href="./ref-img-detail.html?img=223012_ref.jpeg"><span class="icon sm">open_in_new</span>상세 보기</a>
+            </div>
+          </article>
+          <article class="g-item">
+            <div class="g-thumb"><img class="thumb-cover" src="https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/223054_ref.jpeg" alt="223054_ref"></div>
+            <div class="g-meta">
+              <div class="g-title">223054_ref.jpeg</div>
+              <div class="g-tags">#legacy #ref</div>
+              <a class="g-link" href="./ref-img-detail.html?img=223054_ref.jpeg"><span class="icon sm">open_in_new</span>상세 보기</a>
+            </div>
+          </article>
+          <article class="g-item">
+            <div class="g-thumb"><img class="thumb-cover" src="https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/223203_ref.jpeg" alt="223203_ref"></div>
+            <div class="g-meta">
+              <div class="g-title">223203_ref.jpeg</div>
+              <div class="g-tags">#legacy #ref</div>
+              <a class="g-link" href="./ref-img-detail.html?img=223203_ref.jpeg"><span class="icon sm">open_in_new</span>상세 보기</a>
+            </div>
+          </article>
+          <article class="g-item">
             <div class="g-thumb"><img class="thumb-cover" src="https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/hot1.jpg" alt="hot1"></div>
             <div class="g-meta">
               <div class="g-title">hot1.jpg</div>
               <div class="g-tags">#legacy #hot</div>
-              <a class="g-link" href="./ref-img-detail.html"><span class="icon sm">open_in_new</span>상세 보기</a>
+              <a class="g-link" href="./ref-img-detail.html?img=hot1.jpg"><span class="icon sm">open_in_new</span>상세 보기</a>
             </div>
           </article>
           <article class="g-item">
@@ -88,7 +112,7 @@
             <div class="g-meta">
               <div class="g-title">hot2.jpg</div>
               <div class="g-tags">#legacy #hot</div>
-              <a class="g-link" href="./ref-img-detail.html"><span class="icon sm">open_in_new</span>상세 보기</a>
+              <a class="g-link" href="./ref-img-detail.html?img=hot2.jpg"><span class="icon sm">open_in_new</span>상세 보기</a>
             </div>
           </article>
           <article class="g-item">
@@ -96,15 +120,7 @@
             <div class="g-meta">
               <div class="g-title">hot3.jpg</div>
               <div class="g-tags">#legacy #hot</div>
-              <a class="g-link" href="./ref-img-detail.html"><span class="icon sm">open_in_new</span>상세 보기</a>
-            </div>
-          </article>
-          <article class="g-item">
-            <div class="g-thumb"><img class="thumb-cover" src="https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/hot6.jpg" alt="hot6"></div>
-            <div class="g-meta">
-              <div class="g-title">hot6.jpg</div>
-              <div class="g-tags">#legacy #hot</div>
-              <a class="g-link" href="./ref-img-detail.html"><span class="icon sm">open_in_new</span>상세 보기</a>
+              <a class="g-link" href="./ref-img-detail.html?img=hot3.jpg"><span class="icon sm">open_in_new</span>상세 보기</a>
             </div>
           </article>
           <article class="g-item">
@@ -112,7 +128,7 @@
             <div class="g-meta">
               <div class="g-title">landmark4.jpg</div>
               <div class="g-tags">#legacy #landmark</div>
-              <a class="g-link" href="./ref-img-detail.html"><span class="icon sm">open_in_new</span>상세 보기</a>
+              <a class="g-link" href="./ref-img-detail.html?img=landmark4.jpg"><span class="icon sm">open_in_new</span>상세 보기</a>
             </div>
           </article>
           <article class="g-item">
@@ -120,31 +136,7 @@
             <div class="g-meta">
               <div class="g-title">winter1.jpg</div>
               <div class="g-tags">#legacy #winter</div>
-              <a class="g-link" href="./ref-img-detail.html"><span class="icon sm">open_in_new</span>상세 보기</a>
-            </div>
-          </article>
-          <article class="g-item">
-            <div class="g-thumb"><img class="thumb-cover" src="https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/winter2.jpg" alt="winter2"></div>
-            <div class="g-meta">
-              <div class="g-title">winter2.jpg</div>
-              <div class="g-tags">#legacy #winter</div>
-              <a class="g-link" href="./ref-img-detail.html"><span class="icon sm">open_in_new</span>상세 보기</a>
-            </div>
-          </article>
-          <article class="g-item">
-            <div class="g-thumb"><img class="thumb-cover" src="https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/winter7.jpg" alt="winter7"></div>
-            <div class="g-meta">
-              <div class="g-title">winter7.jpg</div>
-              <div class="g-tags">#legacy #winter</div>
-              <a class="g-link" href="./ref-img-detail.html"><span class="icon sm">open_in_new</span>상세 보기</a>
-            </div>
-          </article>
-          <article class="g-item">
-            <div class="g-thumb"><img class="thumb-cover" src="https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/winter8.jpg" alt="winter8"></div>
-            <div class="g-meta">
-              <div class="g-title">winter8.jpg</div>
-              <div class="g-tags">#legacy #winter</div>
-              <a class="g-link" href="./ref-img-detail.html"><span class="icon sm">open_in_new</span>상세 보기</a>
+              <a class="g-link" href="./ref-img-detail.html?img=winter1.jpg"><span class="icon sm">open_in_new</span>상세 보기</a>
             </div>
           </article>
         </div>
