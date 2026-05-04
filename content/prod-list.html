@@ -61,18 +61,25 @@
         </div>
       </div>
 
+      <div class="toolbar" style="margin-bottom:16px;">
+        <div class="toolbar-group" style="flex:1;">
+          <input id="productSearchInput" class="input" type="text" placeholder="상품명 검색" style="min-width:280px;">
+          <select id="productStatusFilter" class="input" aria-label="상태 필터">
+            <option>전체 상태</option>
+            <option>판매 중</option>
+            <option>품절</option>
+            <option>비활성</option>
+          </select>
+        </div>
+        <div class="toolbar-group">
+          <button id="productResetBtn" class="btn" type="button">초기화</button>
+          <button id="productSearchBtn" class="btn" type="button">검색</button>
+        </div>
+      </div>
+
       <div class="panel">
         <div class="panel-head">
           <h2>상품 목록</h2>
-          <div class="actions">
-            <input id="productSearchInput" class="input" type="text" placeholder="상품명 검색">
-            <select id="productStatusFilter" class="input" aria-label="상태 필터">
-              <option>전체 상태</option>
-              <option>판매 중</option>
-              <option>품절</option>
-              <option>비활성</option>
-            </select>
-          </div>
         </div>
 
         <table>
@@ -197,8 +204,21 @@
         renderRows(filtered);
       };
 
-      if (searchInput) searchInput.addEventListener('input', filterAndRender);
+      const resetBtn = document.getElementById('productResetBtn');
+      const searchBtn = document.getElementById('productSearchBtn');
+
+      if (searchInput) {
+        searchInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') filterAndRender(); });
+      }
       if (statusFilter) statusFilter.addEventListener('change', filterAndRender);
+      if (searchBtn) searchBtn.addEventListener('click', filterAndRender);
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          if (searchInput) searchInput.value = '';
+          if (statusFilter) statusFilter.value = '전체 상태';
+          filterAndRender();
+        });
+      }
       filterAndRender();
     }
 

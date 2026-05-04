@@ -70,10 +70,19 @@
         <button class="btn primary"><span class="icon sm" style="margin-right:6px;">add</span>이미지 등록</button>
       </div>
 
+      <div class="toolbar" style="margin-bottom:16px;">
+        <div class="toolbar-group" style="flex:1;">
+          <input id="gallerySearchInput" class="input" placeholder="title, tag 검색" style="min-width:280px;">
+        </div>
+        <div class="toolbar-group">
+          <button id="galleryResetBtn" class="btn" type="button">초기화</button>
+          <button id="gallerySearchBtn" class="btn" type="button">검색</button>
+        </div>
+      </div>
+
       <div class="panel">
         <div class="panel-head">
           <h2>레퍼런스 갤러리</h2>
-          <input id="gallerySearchInput" class="input" placeholder="title, tag 검색">
         </div>
         <div id="galleryContainer" class="gallery"></div>
       </div>
@@ -150,6 +159,8 @@
     async function initGallery() {
       const container = document.getElementById('galleryContainer');
       const searchInput = document.getElementById('gallerySearchInput');
+      const resetBtn = document.getElementById('galleryResetBtn');
+      const searchBtn = document.getElementById('gallerySearchBtn');
       if (container) {
         container.innerHTML = '<div style="padding:8px; color:var(--muted);">데이터를 불러오는 중...</div>';
       }
@@ -174,6 +185,25 @@
       if (searchInput) {
         searchInput.addEventListener('input', (e) => {
           filterAndRender(e.target.value);
+        });
+
+        searchInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            filterAndRender(searchInput.value);
+          }
+        });
+      }
+
+      if (searchBtn && searchInput) {
+        searchBtn.addEventListener('click', () => {
+          filterAndRender(searchInput.value);
+        });
+      }
+
+      if (resetBtn && searchInput) {
+        resetBtn.addEventListener('click', () => {
+          searchInput.value = '';
+          renderGallery(referenceItems);
         });
       }
     }
