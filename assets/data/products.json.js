@@ -1,4 +1,4 @@
-{
+window.__PRODUCTS_DATA__ = {
   "products": [
     {
       "id": 1,
@@ -61,4 +61,4 @@
       "snapRef": "snap_88_1714902115.png"
     }
   ]
-}
+};

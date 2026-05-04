@@ -76,15 +76,15 @@
           <div class="detail-form">
             <div class="detail-field">
               <label class="detail-label" for="nameInput">상품명</label>
-              <input class="input full" id="nameInput" value="빈 사이즈 머플러 [베이지]">
+              <input class="input full" id="nameInput">
             </div>
             <div class="detail-field">
               <label class="detail-label" for="descInput">상품 설명</label>
-              <textarea class="input full" id="descInput" rows="3" style="resize:none;">소프트한 소재와 커다란 디자인으로 겨울 코디나 레이어드업에 활용하기 좋은 백상 자켓입니다.</textarea>
+              <textarea class="input full" id="descInput" rows="3" style="resize:none;"></textarea>
             </div>
             <div class="detail-field">
               <label class="detail-label" for="priceInput">가격</label>
-              <input class="input full" id="priceInput" type="number" min="0" value="29900">
+              <input class="input full" id="priceInput" type="number" min="0">
             </div>
             <div class="detail-field">
               <label class="detail-label" for="pStatInput">상태</label>
@@ -126,39 +126,40 @@
     </main>
   </div>
 
+  <script src="../assets/data/products.json.js"></script>
   <script>
-    const PROD_BASE_URL = 'https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/product/';
+    const PRODUCTS_JSON_PATH = '../assets/data/products.json';
     const DEFAULT_PROD_FILE = '1623540_3_big.webp';
-    const DEFAULT_STORAGE_META = { size: '-', uploadedAt: '-' };
-    const PROD_META = {
-      '1623540_3_big.webp': {
-        name: '빅 사이즈 머플러 [베이지]',
-        brand: '무신사 스탠다드',
-        desc: '소프트한 소재와 커다란 디자인으로 겨울 코디나 레이어드업에 활용하기 좋습니다.',
-        price: 29900,
-        snapRef: '223012_ref.jpeg',
-        size: '310.88 kB',
-        uploadedAt: '2026년 05월 04일 23시 19분'
-      },
-      '550.jpeg': {
-        name: '스웨이드 2-way 크로스백 데일리 오피스룩 겨울 보부상가방',
-        brand: '베이직포인트oem',
-        desc: '데일리한 오피스룩과 아울러지는 2-way 스웨이드 크로스백입니다.',
-        price: 25080,
-        snapRef: '223203_ref.jpeg',
-        size: '26.17 kB',
-        uploadedAt: '2026년 05월 04일 23시 20분'
-      },
-      'VO141-BLK_11.jpg': {
-        name: '베디베로 닿테 안경테 VO141 BLK',
-        brand: 'VEDI VERO',
-        desc: '클래식한 라운드 는낌의 닿테 프레임 안경테입니다.',
-        price: 99000,
-        snapRef: '223054_ref.jpeg',
-        size: '-',
-        uploadedAt: '-'
-      }
+    const DEFAULT_PRODUCT_META = {
+      name: '',
+      desc: '',
+      price: 0,
+      status: '활성',
+      fileName: '',
+      thumbUrl: '',
+      size: '-',
+      uploadedAt: '-'
     };
+
+    async function loadProductMap() {
+      try {
+        const res = await fetch(PRODUCTS_JSON_PATH, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`Failed to load products.json: ${res.status}`);
+        const json = await res.json();
+        const products = Array.isArray(json?.products) ? json.products : [];
+        return products.reduce((acc, p) => {
+          if (p?.fileName) acc[p.fileName] = p;
+          return acc;
+        }, {});
+      } catch (e) {
+        console.warn('products.json fetch 실패, script fallback 사용 시도', e);
+        const products = Array.isArray(window.__PRODUCTS_DATA__?.products) ? window.__PRODUCTS_DATA__.products : [];
+        return products.reduce((acc, p) => {
+          if (p?.fileName) acc[p.fileName] = p;
+          return acc;
+        }, {});
+      }
+    }
 
     function resolveProdFile() {
       try {
@@ -173,28 +174,38 @@
     }
 
     const selectedFile = resolveProdFile();
-    const prodData = PROD_META[selectedFile] || { name: selectedFile, brand: '-', desc: '-', price: 0, snapRef: '-', size: '-', uploadedAt: '-' };
 
-    const previewImage = document.getElementById('detailPreviewImage');
-    if (previewImage) {
-      previewImage.src = `${PROD_BASE_URL}${selectedFile}`;
-      previewImage.alt = selectedFile.replace(/\.[^.]+$/, '');
+    async function initProductDetail() {
+      const productMap = await loadProductMap();
+      const prodData = productMap[selectedFile] || DEFAULT_PRODUCT_META;
+
+      const nameInput = document.getElementById('nameInput');
+      const descInput = document.getElementById('descInput');
+      const priceInput = document.getElementById('priceInput');
+      const pStatInput = document.getElementById('pStatInput');
+      const thumbPreview = document.getElementById('thumbPreview');
+      const fileSizeInput = document.getElementById('fileSizeInput');
+      const uploadedAtInput = document.getElementById('uploadedAtInput');
+
+      if (nameInput) nameInput.value = prodData.name || selectedFile;
+      if (descInput) descInput.value = prodData.desc || '';
+      if (priceInput) priceInput.value = prodData.price ?? 0;
+
+      if (pStatInput) {
+        const statusToValue = { '비활성': '0', '활성': '1', '품절': '2' };
+        pStatInput.value = statusToValue[prodData.status] || '1';
+      }
+
+      if (thumbPreview) {
+        thumbPreview.src = prodData.thumbUrl || '';
+        thumbPreview.alt = (prodData.fileName || selectedFile || '').replace(/\.[^.]+$/, '');
+      }
+
+      if (fileSizeInput) fileSizeInput.value = prodData.size || '-';
+      if (uploadedAtInput) uploadedAtInput.value = prodData.uploadedAt || '-';
     }
 
-    const nameInput = document.getElementById('nameInput');
-    if (nameInput) nameInput.value = prodData.name;
-
-    const descInput = document.getElementById('descInput');
-    if (descInput) descInput.value = prodData.desc;
-
-    const priceInput = document.getElementById('priceInput');
-    if (priceInput) priceInput.value = prodData.price;
-
-    const thumbPreview = document.getElementById('thumbPreview');
-    if (thumbPreview) {
-      thumbPreview.src = `${PROD_BASE_URL}${selectedFile}`;
-      thumbPreview.alt = selectedFile.replace(/\.[^.]+$/, '');
-    }
+    initProductDetail();
 
     const thumbFileInput = document.getElementById('thumbFileInput');
     const thumbFileName = document.getElementById('thumbFileName');
@@ -212,10 +223,6 @@
       });
     }
 
-    const fileSizeInput = document.getElementById('fileSizeInput');
-    const uploadedAtInput = document.getElementById('uploadedAtInput');
-    if (fileSizeInput) fileSizeInput.value = prodData.size;
-    if (uploadedAtInput) uploadedAtInput.value = prodData.uploadedAt;
   </script>
 </body>
 </html>
