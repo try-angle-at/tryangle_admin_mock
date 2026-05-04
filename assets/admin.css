@@ -305,8 +305,8 @@ a:hover {
 
 .input:focus {
   outline: none;
-  border-color: var(--info);
-  box-shadow: 0 0 0 2px rgba(0, 95, 255, 0.2);
+  border-color: var(--brand);
+  box-shadow: 0 0 0 2px rgba(253, 219, 0, 0.35);
 }
 
 .input.full {
