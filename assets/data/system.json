@@ -10,31 +10,31 @@
       "dataId": "PD-241129-1031",
       "userId": "user_43017",
       "device": "iPhone15Pro",
-      "imageReference": "fullshot_1.jpg",
+      "imageReference": "waistshot_2.jpg",
       "confidence": 0.92,
       "createdAt": "2026년 04월 12일 11시 02분",
       "status": "촬영중",
-      "logPath": "../assets/data/sendlog_260504_223012.jsonl"
+      "logPath": "../assets/data/ai_data/waistshot_2_sys.jsonl"
     },
     {
       "dataId": "PD-241129-1030",
       "userId": "user_88902",
       "device": "GalaxyS25",
-      "imageReference": "hot2.jpg",
+      "imageReference": "fullshot_2.jpeg",
       "confidence": 0.89,
       "createdAt": "2026년 04월 12일 11시 01분",
       "status": "촬영중",
-      "logPath": "../assets/data/sendlog_260504_223054.jsonl"
+      "logPath": "../assets/data/ai_data/fullshot_2_sys.jsonl"
     },
     {
       "dataId": "PD-241129-1029",
       "userId": "user_12048",
       "device": "iPhone14",
-      "imageReference": "winter1.jpg",
+      "imageReference": "waistshot_2.jpg",
       "confidence": 0.95,
       "createdAt": "2026년 04월 12일 11시 01분",
       "status": "완료",
-      "logPath": "../assets/data/sendlog_260504_223202.jsonl"
+      "logPath": "../assets/data/ai_data/waistshot_2_sys.jsonl"
     },
     {
       "dataId": "PD-241129-1028",
