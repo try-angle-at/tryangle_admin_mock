@@ -85,10 +85,18 @@ a:hover {
 }
 
 .page-head {
+  height: 64px;
+  border-bottom: 1px solid var(--line);
+  margin: -24px -24px 24px;
+  padding: 0 24px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .page-head h1 {
