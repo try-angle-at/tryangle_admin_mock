@@ -31,6 +31,56 @@
       display: grid;
       gap: 12px;
     }
+    .related-snaps {
+      display: grid;
+      gap: 8px;
+    }
+    .related-snap-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      background: var(--panel-bg);
+    }
+    .related-snap-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .related-snap-thumb-wrap {
+      width: 56px;
+      height: 56px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #efefef;
+      flex-shrink: 0;
+    }
+    .related-snap-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .related-snap-meta {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+    }
+    .related-snap-name {
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 600;
+      word-break: break-all;
+    }
+    .related-snap-sub {
+      font-size: 12px;
+      color: var(--muted);
+    }
   </style>
 </head>
 <body>
@@ -142,14 +192,23 @@
             </div>
           </div>
         </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>상품 후기 사진</h2></div>
+          <div class="detail-form">
+            <div id="relatedSnapsList" class="related-snaps"></div>
+          </div>
+        </div>
       </div>
 
     </main>
   </div>
 
   <script src="../assets/data/products.json.js"></script>
+  <script src="../assets/data/snaps.json.js"></script>
   <script>
     const PRODUCTS_JSON_PATH = '../assets/data/products.json';
+    const SNAPS_JSON_PATH = '../assets/data/snaps.json';
     const DEFAULT_PROD_FILE = '1623540_3_big.webp';
     const DEFAULT_PRODUCT_META = {
       name: '',
@@ -182,6 +241,55 @@
       }
     }
 
+    async function loadSnaps() {
+      try {
+        const res = await fetch(SNAPS_JSON_PATH, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`Failed to load snaps.json: ${res.status}`);
+        const json = await res.json();
+        return Array.isArray(json?.snaps) ? json.snaps : [];
+      } catch (e) {
+        console.warn('snaps.json fetch 실패, script fallback 사용 시도', e);
+        return Array.isArray(window.__SNAPS_DATA__?.snaps) ? window.__SNAPS_DATA__.snaps : [];
+      }
+    }
+
+    function renderRelatedSnaps(prodData, snaps) {
+      const wrap = document.getElementById('relatedSnapsList');
+      if (!wrap) return;
+
+      const related = snaps
+        .filter((item) => Number(item?.prodId) === Number(prodData?.id))
+        .sort((a, b) => Number(b?.sId || 0) - Number(a?.sId || 0));
+
+      if (!related.length) {
+        wrap.innerHTML = '<div style="font-size:12px;color:var(--muted);">연결된 후기 사진이 없습니다.</div>';
+        return;
+      }
+
+      wrap.innerHTML = related.map((item) => {
+        const fileName = item?.fileName || '-';
+        const reference = item?.referenceFileName || '-';
+        const thumbUrl = item?.snapUrl || '';
+        const href = `./snap-detail.html?snap=${encodeURIComponent(fileName)}`;
+        return `
+          <div class="related-snap-item">
+            <div class="related-snap-left">
+              <div class="related-snap-thumb-wrap">
+                <img class="related-snap-thumb" src="${thumbUrl}" alt="${fileName}">
+              </div>
+              <div class="related-snap-meta">
+                <div class="related-snap-name">${fileName}</div>
+                <div class="related-snap-sub">참조 레퍼런스: ${reference}</div>
+              </div>
+            </div>
+            <a class="btn" href="${href}">
+              <span class="icon sm" style="margin-right:6px;">open_in_new</span>상세 보기
+            </a>
+          </div>
+        `;
+      }).join('');
+    }
+
     function resolveProdFile() {
       try {
         const raw = new URLSearchParams(window.location.search).get('prod');
@@ -197,7 +305,7 @@
     const selectedFile = resolveProdFile();
 
     async function initProductDetail() {
-      const productMap = await loadProductMap();
+      const [productMap, snaps] = await Promise.all([loadProductMap(), loadSnaps()]);
       const prodData = productMap[selectedFile] || DEFAULT_PRODUCT_META;
 
       const nameInput = document.getElementById('nameInput');
@@ -224,10 +332,12 @@
 
       if (fileSizeInput) fileSizeInput.value = prodData.size || '-';
       if (uploadedAtInput) uploadedAtInput.value = prodData.uploadedAt || '-';
+      renderRelatedSnaps(prodData, snaps);
     }
 
     initProductDetail();
 
+    const thumbPreview = document.getElementById('thumbPreview');
     const thumbFileInput = document.getElementById('thumbFileInput');
     const thumbFileName = document.getElementById('thumbFileName');
     if (thumbFileInput) {

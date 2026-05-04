@@ -24,6 +24,45 @@
       font-weight: 600;
       color: var(--muted);
     }
+    .used-ref-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: grid;
+      gap: 6px;
+      background: var(--panel-bg);
+    }
+    .used-ref-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .used-ref-thumb-wrap {
+      width: 64px;
+      height: 64px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #efefef;
+      flex-shrink: 0;
+    }
+    .used-ref-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .used-ref-name {
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 600;
+      word-break: break-all;
+    }
+    .used-ref-sub {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
   </style>
 </head>
 <body>
@@ -147,6 +186,11 @@
               <label class="detail-label" for="urlInput">snapUrl</label>
               <input class="input full" id="urlInput" readonly>
             </div>
+
+            <div class="detail-field" style="border-top:1px solid var(--line); padding-top:12px; margin-top:2px;">
+              <label class="detail-label">사용 레퍼런스 이미지</label>
+              <div id="usedReferenceWrap"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -154,8 +198,10 @@
   </div>
 
   <script src="../assets/data/snaps.json.js"></script>
+  <script src="../assets/data/reference.json.js"></script>
   <script>
     const SNAPS_JSON_PATH = '../assets/data/snaps.json';
+    const REFERENCE_JSON_PATH = '../assets/data/reference.json';
     const DEFAULT_SNAP_FILE = 'snap_142_1714859210.png';
 
     function sanitizeSnapFile(value) {
@@ -186,14 +232,74 @@
       }
     }
 
+    async function loadReferenceMap() {
+      try {
+        const res = await fetch(REFERENCE_JSON_PATH, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`Failed to load reference.json: ${res.status}`);
+        const json = await res.json();
+        const refs = Array.isArray(json?.references) ? json.references : [];
+        return refs.reduce((acc, ref) => {
+          if (ref?.fileName) acc[ref.fileName] = ref;
+          return acc;
+        }, {});
+      } catch (e) {
+        console.warn('reference.json fetch 실패, script fallback 사용 시도', e);
+        const refs = Array.isArray(window.__REFERENCE_DATA__?.references) ? window.__REFERENCE_DATA__.references : [];
+        return refs.reduce((acc, ref) => {
+          if (ref?.fileName) acc[ref.fileName] = ref;
+          return acc;
+        }, {});
+      }
+    }
+
     function setValue(id, value) {
       const el = document.getElementById(id);
       if (el) el.value = String(value ?? '-');
     }
 
+    function renderUsedReference(data, referenceMap) {
+      const wrap = document.getElementById('usedReferenceWrap');
+      if (!wrap) return;
+
+      const refFileName = String(data?.referenceFileName || '').trim();
+      if (!refFileName) {
+        wrap.innerHTML = '<div class="used-ref-sub">이 snap에 연결된 레퍼런스 정보가 없습니다.</div>';
+        return;
+      }
+
+      const ref = referenceMap[refFileName];
+      if (!ref) {
+        wrap.innerHTML = `
+          <div class="used-ref-card">
+            <div class="used-ref-name">${refFileName}</div>
+            <div class="used-ref-sub">reference.json에서 해당 파일을 찾을 수 없습니다.</div>
+          </div>
+        `;
+        return;
+      }
+
+      const href = `./ref-img-detail.html?img=${encodeURIComponent(ref.fileName)}`;
+      const tags = ref.tagsText || (Array.isArray(ref.tags) ? ref.tags.map((tag) => `#${tag}`).join(', ') : '-');
+      const refThumbUrl = ref.url || '';
+
+      wrap.innerHTML = `
+        <div class="used-ref-card">
+          <div class="used-ref-top">
+            <div class="used-ref-thumb-wrap">
+              <img class="used-ref-thumb" src="${refThumbUrl}" alt="${ref.fileName}">
+            </div>
+            <div class="used-ref-name">${ref.fileName}</div>
+          </div>
+          <div class="used-ref-sub">제목: ${ref.title || '-'}</div>
+          <div class="used-ref-sub">태그: ${tags || '-'}</div>
+          <div><a class="btn" href="${href}"><span class="icon sm" style="margin-right:6px;">open_in_new</span>레퍼런스 상세 보기</a></div>
+        </div>
+      `;
+    }
+
     async function initSnapDetail() {
       const selectedFile = getSelectedFile();
-      const snaps = await loadSnaps();
+      const [snaps, referenceMap] = await Promise.all([loadSnaps(), loadReferenceMap()]);
       const fallback = snaps[0] || {};
       const data = snaps.find((item) => item.fileName === selectedFile) || fallback;
 
@@ -224,6 +330,7 @@
       setValue('uploadedAtInput', data.uploadedAt || '-');
       setValue('viewCntInput', data.viewCnt ?? 0);
       setValue('urlInput', previewUrl || '-');
+      renderUsedReference(data, referenceMap);
 
       if (openOriginalBtn) {
         openOriginalBtn.addEventListener('click', () => {
