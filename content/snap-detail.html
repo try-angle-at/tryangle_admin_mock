@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>후기 사진 상세</title>
+  <link rel="stylesheet" href="../assets/admin.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0">
+  <style>
+    .detail-form {
+      padding: 12px;
+      display: grid;
+      gap: 12px;
+    }
+    .detail-field {
+      display: grid;
+      gap: 6px;
+    }
+    .detail-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand" style="display:flex;align-items:center;gap:8px;">
+        <span class="icon">dashboard_customize</span>
+        TryAngle Admin
+      </div>
+      <div class="nav-title">메인</div>
+      <ul class="nav-list">
+        <li><a href="../index.html"><span class="icon sm" style="margin-right:8px;">grid_view</span>대시보드</a></li>
+      </ul>
+      <div class="nav-title">데이터 관리</div>
+      <ul class="nav-list">
+        <li><a href="../realtime/realtime-list.html"><span class="icon sm" style="margin-right:8px;">analytics</span>실시간 로그 데이터 목록</a></li>
+      </ul>
+      <div class="nav-title">컨텐츠 관리</div>
+      <ul class="nav-list">
+        <li><a href="./ref-img-gallery.html"><span class="icon sm" style="margin-right:8px;">image</span>레퍼런스 이미지 관리</a></li>
+        <li><a href="./prod-list.html"><span class="icon sm" style="margin-right:8px;">shopping_bag</span>상품 관리</a></li>
+        <li><a class="active" href="./snap-list.html"><span class="icon sm" style="margin-right:8px;">photo_library</span>후기 사진 관리</a></li>
+      </ul>
+    </aside>
+
+    <main class="main">
+      <div class="page-head">
+        <div>
+          <div class="breadcrumb-head">
+            <a href="./snap-list.html" class="breadcrumb-link">목록</a>
+            <span class="breadcrumb-sep">|</span>
+            <h1>후기 사진 상세</h1>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn" id="openOriginalBtn" type="button">원본 열기</button>
+        </div>
+      </div>
+
+      <div class="preview">
+        <div class="panel" style="padding:12px; align-self:start;">
+          <div class="thumb" style="overflow:hidden; min-height:380px;">
+            <img id="detailPreviewImage" class="thumb-cover" src="" alt="snap image">
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>snap 메타데이터</h2></div>
+          <div class="detail-form">
+            <div class="detail-field">
+              <label class="detail-label" for="fileNameInput">파일명</label>
+              <input class="input full" id="fileNameInput" readonly>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div class="detail-field">
+                <label class="detail-label" for="idInput">id</label>
+                <input class="input full" id="idInput" readonly>
+              </div>
+              <div class="detail-field">
+                <label class="detail-label" for="sIdInput">sId (session)</label>
+                <input class="input full" id="sIdInput" readonly>
+              </div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+              <div class="detail-field">
+                <label class="detail-label" for="userIdInput">userId</label>
+                <input class="input full" id="userIdInput" readonly>
+              </div>
+              <div class="detail-field">
+                <label class="detail-label" for="prodIdInput">prodId</label>
+                <input class="input full" id="prodIdInput" readonly>
+              </div>
+              <div class="detail-field">
+                <label class="detail-label" for="imgIdInput">imgId</label>
+                <input class="input full" id="imgIdInput" readonly>
+              </div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+              <div class="detail-field">
+                <label class="detail-label" for="mimeInput">MIME</label>
+                <input class="input full" id="mimeInput" readonly>
+              </div>
+              <div class="detail-field">
+                <label class="detail-label" for="storageClassInput">Storage Class</label>
+                <input class="input full" id="storageClassInput" readonly>
+              </div>
+              <div class="detail-field">
+                <label class="detail-label" for="sizeInput">파일 크기</label>
+                <input class="input full" id="sizeInput" readonly>
+              </div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div class="detail-field">
+                <label class="detail-label" for="uploadedAtInput">업로드 시간</label>
+                <input class="input full" id="uploadedAtInput" readonly>
+              </div>
+              <div class="detail-field">
+                <label class="detail-label" for="viewCntInput">조회수</label>
+                <input class="input full" id="viewCntInput" readonly>
+              </div>
+            </div>
+            <div class="detail-field">
+              <label class="detail-label" for="urlInput">snapUrl</label>
+              <input class="input full" id="urlInput" readonly>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../assets/data/snaps.json.js"></script>
+  <script>
+    const SNAPS_JSON_PATH = '../assets/data/snaps.json';
+    const DEFAULT_SNAP_FILE = 'snap_142_1714859210.png';
+
+    function sanitizeSnapFile(value) {
+      const normalized = String(value || '').trim();
+      if (!normalized) return DEFAULT_SNAP_FILE;
+      if (!/^[a-zA-Z0-9._-]+\.(jpg|jpeg|png|webp)$/i.test(normalized)) return DEFAULT_SNAP_FILE;
+      return normalized;
+    }
+
+    function getSelectedFile() {
+      try {
+        const raw = new URLSearchParams(window.location.search).get('snap');
+        return sanitizeSnapFile(raw);
+      } catch (_) {
+        return DEFAULT_SNAP_FILE;
+      }
+    }
+
+    async function loadSnaps() {
+      try {
+        const res = await fetch(SNAPS_JSON_PATH, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`Failed to load snaps.json: ${res.status}`);
+        const json = await res.json();
+        return Array.isArray(json?.snaps) ? json.snaps : [];
+      } catch (e) {
+        console.warn('snaps.json fetch 실패, script fallback 사용 시도', e);
+        return Array.isArray(window.__SNAPS_DATA__?.snaps) ? window.__SNAPS_DATA__.snaps : [];
+      }
+    }
+
+    function setValue(id, value) {
+      const el = document.getElementById(id);
+      if (el) el.value = String(value ?? '-');
+    }
+
+    async function initSnapDetail() {
+      const selectedFile = getSelectedFile();
+      const snaps = await loadSnaps();
+      const fallback = snaps[0] || {};
+      const data = snaps.find((item) => item.fileName === selectedFile) || fallback;
+
+      const preview = document.getElementById('detailPreviewImage');
+      const openOriginalBtn = document.getElementById('openOriginalBtn');
+      const previewUrl = data.snapUrl || '';
+
+      if (preview) {
+        preview.src = previewUrl;
+        preview.alt = data.fileName || 'snap image';
+      }
+
+      setValue('fileNameInput', data.fileName || '-');
+      setValue('idInput', data.id);
+      setValue('sIdInput', data.sId);
+      setValue('userIdInput', data.userId);
+      setValue('prodIdInput', data.prodId);
+      setValue('imgIdInput', data.imgId);
+      setValue('mimeInput', data.mime || '-');
+      setValue('storageClassInput', data.storageClass || '-');
+      setValue('sizeInput', data.size || '-');
+      setValue('uploadedAtInput', data.uploadedAt || '-');
+      setValue('viewCntInput', data.viewCnt ?? 0);
+      setValue('urlInput', previewUrl || '-');
+
+      if (openOriginalBtn) {
+        openOriginalBtn.addEventListener('click', () => {
+          if (!previewUrl) return;
+          window.open(previewUrl, '_blank', 'noopener,noreferrer');
+        });
+      }
+    }
+
+    initSnapDetail();
+  </script>
+</body>
+</html>

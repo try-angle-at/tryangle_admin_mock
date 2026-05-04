@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>후기 사진 관리</title>
+  <link rel="stylesheet" href="../assets/admin.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand" style="display:flex;align-items:center;gap:8px;">
+        <span class="icon">dashboard_customize</span>
+        TryAngle Admin
+      </div>
+      <div class="nav-title">메인</div>
+      <ul class="nav-list">
+        <li><a href="../index.html"><span class="icon sm" style="margin-right:8px;">grid_view</span>대시보드</a></li>
+      </ul>
+      <div class="nav-title">데이터 관리</div>
+      <ul class="nav-list">
+        <li><a href="../realtime/realtime-list.html"><span class="icon sm" style="margin-right:8px;">analytics</span>실시간 로그 데이터 목록</a></li>
+      </ul>
+      <div class="nav-title">컨텐츠 관리</div>
+      <ul class="nav-list">
+        <li><a href="./ref-img-gallery.html"><span class="icon sm" style="margin-right:8px;">image</span>레퍼런스 이미지 관리</a></li>
+        <li><a href="./prod-list.html"><span class="icon sm" style="margin-right:8px;">shopping_bag</span>상품 관리</a></li>
+        <li><a class="active" href="./snap-list.html"><span class="icon sm" style="margin-right:8px;">photo_library</span>후기 사진 관리</a></li>
+      </ul>
+    </aside>
+
+    <main class="main">
+      <div class="page-head">
+        <div>
+          <h1>후기 사진 관리</h1>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="label">전체 후기 사진</div>
+          <div id="kpiTotal" class="value">-</div>
+        </div>
+        <div class="card">
+          <div class="label">평균 파일 크기</div>
+          <div id="kpiAvgSize" class="value">-</div>
+        </div>
+        <div class="card">
+          <div class="label">총 조회수</div>
+          <div id="kpiViewTotal" class="value">-</div>
+        </div>
+      </div>
+
+      <div class="toolbar" style="margin-bottom:16px;">
+        <div class="toolbar-group" style="flex:1;">
+          <input id="snapSearchInput" class="input" type="text" placeholder="파일명, 유저 ID, 세션 ID 검색" style="min-width:280px;">
+        </div>
+        <div class="toolbar-group">
+          <button id="snapResetBtn" class="btn" type="button">초기화</button>
+          <button id="snapSearchBtn" class="btn" type="button">검색</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>후기 사진 목록</h2>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>미리보기</th>
+              <th>파일명</th>
+              <th>userId</th>
+              <th>sId</th>
+              <th>prodId / imgId</th>
+              <th>형식</th>
+              <th>크기</th>
+              <th>업로드 시간</th>
+              <th>조회수</th>
+              <th>열람</th>
+            </tr>
+          </thead>
+          <tbody id="snapTableBody"></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script src="../assets/data/snaps.json.js"></script>
+  <script>
+    const SNAPS_JSON_PATH = '../assets/data/snaps.json';
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function parseSizeMb(value) {
+      const match = String(value || '').match(/([0-9]+(?:\.[0-9]+)?)\s*MB/i);
+      return match ? Number(match[1]) : 0;
+    }
+
+    function updateKpi(snaps) {
+      const total = snaps.length;
+      const totalSize = snaps.reduce((sum, s) => sum + parseSizeMb(s.size), 0);
+      const avgSize = total ? (totalSize / total).toFixed(2) : '0.00';
+      const totalViews = snaps.reduce((sum, s) => sum + Number(s.viewCnt || 0), 0);
+
+      document.getElementById('kpiTotal').textContent = String(total);
+      document.getElementById('kpiAvgSize').textContent = `${avgSize} MB`;
+      document.getElementById('kpiViewTotal').textContent = String(totalViews);
+    }
+
+    function renderRows(snaps) {
+      const tbody = document.getElementById('snapTableBody');
+      if (!tbody) return;
+
+      if (!snaps.length) {
+        tbody.innerHTML = '<tr><td colspan="11" style="color:var(--muted);">검색 결과가 없습니다.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = snaps.map((snap) => {
+        const preview = snap.snapUrl || '';
+        const detailHref = `./snap-detail.html?snap=${encodeURIComponent(snap.fileName || '')}`;
+
+        return `
+          <tr>
+            <td>${escapeHtml(snap.id)}</td>
+            <td>
+              <div style="width:48px;height:48px;border-radius:6px;overflow:hidden;background:#efefef;">
+                ${preview ? `<img style="width:100%;height:100%;object-fit:cover;" src="${escapeHtml(preview)}" alt="${escapeHtml(snap.fileName || '')}">` : ''}
+              </div>
+            </td>
+            <td><a href="${detailHref}">${escapeHtml(snap.fileName || '-')}</a></td>
+            <td>${escapeHtml(snap.userId)}</td>
+            <td>${escapeHtml(snap.sId)}</td>
+            <td>${escapeHtml(snap.prodId)} / ${escapeHtml(snap.imgId)}</td>
+            <td>${escapeHtml(snap.mime || '-')}</td>
+            <td>${escapeHtml(snap.size || '-')}</td>
+            <td>${escapeHtml(snap.uploadedAt || '-')}</td>
+            <td>${escapeHtml(snap.viewCnt || 0)}</td>
+            <td>
+              <a class="btn" href="${detailHref}">상세보기</a>
+              ${preview ? `<a class="btn" href="${escapeHtml(preview)}" target="_blank" rel="noopener noreferrer" style="margin-left:6px;">원본보기</a>` : ''}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function loadSnaps() {
+      try {
+        const res = await fetch(SNAPS_JSON_PATH, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`Failed to load snaps.json: ${res.status}`);
+        const json = await res.json();
+        return Array.isArray(json?.snaps) ? json.snaps : [];
+      } catch (e) {
+        console.warn('snaps.json fetch 실패, script fallback 사용 시도', e);
+        const fallback = window.__SNAPS_DATA__;
+        return Array.isArray(fallback?.snaps) ? fallback.snaps : [];
+      }
+    }
+
+    async function initSnapList() {
+      const searchInput = document.getElementById('snapSearchInput');
+      const resetBtn = document.getElementById('snapResetBtn');
+      const searchBtn = document.getElementById('snapSearchBtn');
+      const allSnaps = await loadSnaps();
+      updateKpi(allSnaps);
+
+      const filterAndRender = () => {
+        const q = (searchInput?.value || '').trim().toLowerCase();
+        const filtered = allSnaps.filter((snap) => {
+          if (!q) return true;
+          const fileName = String(snap.fileName || '').toLowerCase();
+          const userId = String(snap.userId || '').toLowerCase();
+          const sId = String(snap.sId || '').toLowerCase();
+          return fileName.includes(q) || userId.includes(q) || sId.includes(q);
+        });
+        renderRows(filtered);
+      };
+
+      if (searchInput) {
+        searchInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') filterAndRender(); });
+      }
+      if (searchBtn) searchBtn.addEventListener('click', filterAndRender);
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          if (searchInput) searchInput.value = '';
+          filterAndRender();
+        });
+      }
+
+      filterAndRender();
+    }
+
+    initSnapList();
+  </script>
+</body>
+</html>
