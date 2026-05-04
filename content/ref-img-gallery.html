@@ -73,76 +73,112 @@
       <div class="panel">
         <div class="panel-head">
           <h2>레퍼런스 갤러리</h2>
-          <input class="input" placeholder="title, tag 검색">
+          <input id="gallerySearchInput" class="input" placeholder="title, tag 검색">
         </div>
-        <div class="gallery">
-          <article class="g-item">
-            <div class="g-thumb"><img class="thumb-cover" src="https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/ref/fullshot_1.jpg" alt="fullshot_1"></div>
-            <div class="g-meta">
-              <div class="g-title">fullshot_1.jpg</div>
-              <div class="g-tags">#legacy #ref #fullshot</div>
-              <a class="g-link" href="./ref-img-detail.html?img=fullshot_1.jpg"><span class="icon sm">open_in_new</span>상세 보기</a>
-            </div>
-          </article>
-          <article class="g-item">
-            <div class="g-thumb"><img class="thumb-cover" src="https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/ref/fullshot_2.jpeg" alt="fullshot_2"></div>
-            <div class="g-meta">
-              <div class="g-title">fullshot_2.jpeg</div>
-              <div class="g-tags">#legacy #ref #fullshot</div>
-              <a class="g-link" href="./ref-img-detail.html?img=fullshot_2.jpeg"><span class="icon sm">open_in_new</span>상세 보기</a>
-            </div>
-          </article>
-          <article class="g-item">
-            <div class="g-thumb"><img class="thumb-cover" src="https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/ref/fullshot_3.jpg" alt="fullshot_3"></div>
-            <div class="g-meta">
-              <div class="g-title">fullshot_3.jpg</div>
-              <div class="g-tags">#legacy #ref #fullshot</div>
-              <a class="g-link" href="./ref-img-detail.html?img=fullshot_3.jpg"><span class="icon sm">open_in_new</span>상세 보기</a>
-            </div>
-          </article>
-          <article class="g-item">
-            <div class="g-thumb"><img class="thumb-cover" src="https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/ref/fullshot_4.jpg" alt="fullshot_4"></div>
-            <div class="g-meta">
-              <div class="g-title">fullshot_4.jpg</div>
-              <div class="g-tags">#legacy #ref #fullshot</div>
-              <a class="g-link" href="./ref-img-detail.html?img=fullshot_4.jpg"><span class="icon sm">open_in_new</span>상세 보기</a>
-            </div>
-          </article>
-          <article class="g-item">
-            <div class="g-thumb"><img class="thumb-cover" src="https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/ref/kneeshot_1.jpeg" alt="kneeshot_1"></div>
-            <div class="g-meta">
-              <div class="g-title">kneeshot_1.jpeg</div>
-              <div class="g-tags">#legacy #ref #kneeshot</div>
-              <a class="g-link" href="./ref-img-detail.html?img=kneeshot_1.jpeg"><span class="icon sm">open_in_new</span>상세 보기</a>
-            </div>
-          </article>
-          <article class="g-item">
-            <div class="g-thumb"><img class="thumb-cover" src="https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/ref/waistshot_1.jpg" alt="waistshot_1"></div>
-            <div class="g-meta">
-              <div class="g-title">waistshot_1.jpg</div>
-              <div class="g-tags">#legacy #ref #waistshot</div>
-              <a class="g-link" href="./ref-img-detail.html?img=waistshot_1.jpg"><span class="icon sm">open_in_new</span>상세 보기</a>
-            </div>
-          </article>
-          <article class="g-item">
-            <div class="g-thumb"><img class="thumb-cover" src="https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/ref/waistshot_2.jpeg" alt="waistshot_2"></div>
-            <div class="g-meta">
-              <div class="g-title">waistshot_2.jpeg</div>
-              <div class="g-tags">#legacy #ref #waistshot</div>
-              <a class="g-link" href="./ref-img-detail.html?img=waistshot_2.jpeg"><span class="icon sm">open_in_new</span>상세 보기</a>
-            </div>
-          </article>
-          <article class="g-item">
-            <div class="g-thumb"><img class="thumb-cover" src="https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/ref/waistshot_3.jpg" alt="waistshot_3"></div>
-            <div class="g-meta">
-              <div class="g-title">waistshot_3.jpg</div>
-              <div class="g-tags">#legacy #ref #waistshot</div>
-              <a class="g-link" href="./ref-img-detail.html?img=waistshot_3.jpg"><span class="icon sm">open_in_new</span>상세 보기</a>
-            </div>
-          </article>
-        </div>
+        <div id="galleryContainer" class="gallery"></div>
       </div>
     </main>
   </div>
+
+  <script src="../assets/data/reference.json.js"></script>
+  <script>
+    const REFERENCE_JSON_PATH = '../assets/data/reference.json';
+    let referenceItems = [];
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function renderGallery(items) {
+      const container = document.getElementById('galleryContainer');
+      if (!container) return;
+
+      if (!items.length) {
+        container.innerHTML = '<div style="padding:8px; color:var(--muted);">검색 결과가 없습니다.</div>';
+        return;
+      }
+
+      container.innerHTML = items.map((item) => {
+        const fileName = escapeHtml(item.fileName || '');
+        const imageUrl = escapeHtml(item.url || '');
+        const tags = Array.isArray(item.tags)
+          ? item.tags.map((tag) => `#${escapeHtml(tag)}`).join(' ')
+          : '';
+        const detailHref = `./ref-img-detail.html?img=${encodeURIComponent(item.fileName || '')}`;
+
+        return `
+          <article class="g-item">
+            <div class="g-thumb"><img class="thumb-cover" src="${imageUrl}" alt="${fileName}"></div>
+            <div class="g-meta">
+              <div class="g-title">${fileName}</div>
+              <div class="g-tags">${tags}</div>
+              <a class="g-link" href="${detailHref}"><span class="icon sm">open_in_new</span>상세 보기</a>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function filterAndRender(query) {
+      const normalized = (query || '').trim().toLowerCase();
+      if (!normalized) {
+        renderGallery(referenceItems);
+        return;
+      }
+
+      const filtered = referenceItems.filter((item) => {
+        const fileName = (item.fileName || '').toLowerCase();
+        const title = (item.title || '').toLowerCase();
+        const desc = (item.description || '').toLowerCase();
+        const tags = Array.isArray(item.tags) ? item.tags.join(' ').toLowerCase() : '';
+        const tagsText = (item.tagsText || '').toLowerCase();
+        return fileName.includes(normalized)
+          || title.includes(normalized)
+          || desc.includes(normalized)
+          || tags.includes(normalized)
+          || tagsText.includes(normalized);
+      });
+
+      renderGallery(filtered);
+    }
+
+    async function initGallery() {
+      const container = document.getElementById('galleryContainer');
+      const searchInput = document.getElementById('gallerySearchInput');
+      if (container) {
+        container.innerHTML = '<div style="padding:8px; color:var(--muted);">데이터를 불러오는 중...</div>';
+      }
+
+      try {
+        const res = await fetch(REFERENCE_JSON_PATH, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`Failed to load reference.json: ${res.status}`);
+        const json = await res.json();
+        referenceItems = Array.isArray(json?.references) ? json.references : [];
+        renderGallery(referenceItems);
+      } catch (e) {
+        console.warn('reference.json fetch 실패, script fallback 사용 시도', e);
+        const fallback = window.__REFERENCE_DATA__;
+        referenceItems = Array.isArray(fallback?.references) ? fallback.references : [];
+        if (referenceItems.length) {
+          renderGallery(referenceItems);
+        } else if (container) {
+          container.innerHTML = '<div style="padding:8px; color:var(--error);">데이터를 불러오지 못했습니다.</div>';
+        }
+      }
+
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          filterAndRender(e.target.value);
+        });
+      }
+    }
+
+    initGallery();
+  </script>
 </body>
 </html>
