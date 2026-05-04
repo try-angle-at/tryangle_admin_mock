@@ -57,7 +57,7 @@
 
       <div class="toolbar" style="margin-bottom:16px;">
         <div class="toolbar-group" style="flex:1;">
-          <input id="snapSearchInput" class="input" type="text" placeholder="파일명, 유저 ID, 세션 ID 검색" style="min-width:280px;">
+          <input id="snapSearchInput" class="input" type="text" placeholder="파일명, 유저 ID 검색" style="min-width:280px;">
         </div>
         <div class="toolbar-group">
           <button id="snapResetBtn" class="btn" type="button">초기화</button>
@@ -77,13 +77,10 @@
               <th>미리보기</th>
               <th>파일명</th>
               <th>userId</th>
-              <th>sId</th>
-              <th>prodId / imgId</th>
-              <th>형식</th>
               <th>크기</th>
               <th>업로드 시간</th>
               <th>조회수</th>
-              <th>열람</th>
+              <th style="text-align:right;">작업</th>
             </tr>
           </thead>
           <tbody id="snapTableBody"></tbody>
@@ -126,7 +123,7 @@
       if (!tbody) return;
 
       if (!snaps.length) {
-        tbody.innerHTML = '<tr><td colspan="11" style="color:var(--muted);">검색 결과가 없습니다.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--muted);">검색 결과가 없습니다.</td></tr>';
         return;
       }
 
@@ -136,7 +133,7 @@
 
         return `
           <tr>
-            <td>${escapeHtml(snap.id)}</td>
+            <td>${escapeHtml(snap.id || '-')}</td>
             <td>
               <div style="width:48px;height:48px;border-radius:6px;overflow:hidden;background:#efefef;">
                 ${preview ? `<img style="width:100%;height:100%;object-fit:cover;" src="${escapeHtml(preview)}" alt="${escapeHtml(snap.fileName || '')}">` : ''}
@@ -144,16 +141,10 @@
             </td>
             <td><a href="${detailHref}">${escapeHtml(snap.fileName || '-')}</a></td>
             <td>${escapeHtml(snap.userId)}</td>
-            <td>${escapeHtml(snap.sId)}</td>
-            <td>${escapeHtml(snap.prodId)} / ${escapeHtml(snap.imgId)}</td>
-            <td>${escapeHtml(snap.mime || '-')}</td>
             <td>${escapeHtml(snap.size || '-')}</td>
             <td>${escapeHtml(snap.uploadedAt || '-')}</td>
             <td>${escapeHtml(snap.viewCnt || 0)}</td>
-            <td>
-              <a class="btn" href="${detailHref}">상세보기</a>
-              ${preview ? `<a class="btn" href="${escapeHtml(preview)}" target="_blank" rel="noopener noreferrer" style="margin-left:6px;">원본보기</a>` : ''}
-            </td>
+            <td><a class="btn" href="${detailHref}">상세보기</a></td>
           </tr>
         `;
       }).join('');
@@ -185,8 +176,7 @@
           if (!q) return true;
           const fileName = String(snap.fileName || '').toLowerCase();
           const userId = String(snap.userId || '').toLowerCase();
-          const sId = String(snap.sId || '').toLowerCase();
-          return fileName.includes(q) || userId.includes(q) || sId.includes(q);
+          return fileName.includes(q) || userId.includes(q);
         });
         renderRows(filtered);
       };
