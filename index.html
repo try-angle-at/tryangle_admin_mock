@@ -35,7 +35,7 @@
       <header class="top-nav">
         <div class="header-search">
           <span class="icon" style="color:var(--muted);">search</span>
-          <input type="text" placeholder="Search systems...">
+          <input type="text" placeholder="사용자 ID 또는 세션 ID 검색...">
         </div>
         <div class="right">
           <button class="icon-btn" aria-label="Notifications" style="position:relative;">
@@ -45,82 +45,83 @@
           <button class="icon-btn" aria-label="Help">
             <span class="icon">help</span>
           </button>
-          <div class="top-divider"></div>
-          <button class="btn primary"><span class="icon sm" style="margin-right:6px;">add</span>Create Task</button>
         </div>
       </header>
 
       <section class="dashboard-wrap">
         <div class="toolbar">
           <div class="toolbar-group">
-            <button class="chip-btn"><span class="icon sm">calendar_today</span>Last 30 Days</button>
-            <button class="chip-btn"><span class="icon sm">filter_list</span>Filters</button>
+            <button class="chip-btn"><span class="icon sm">calendar_today</span>최근 30일</button>
+            <button class="chip-btn"><span class="icon sm">filter_list</span>필터</button>
           </div>
-          <button class="btn" style="color:var(--info);"><span class="icon sm" style="margin-right:4px;">restart_alt</span>Reset All</button>
+          <button class="btn" style="color:var(--info);"><span class="icon sm" style="margin-right:4px;">restart_alt</span>새로고침</button>
         </div>
 
         <div class="grid grid-3">
+          <!-- DB tb_session 기반 지표 -->
           <div class="card">
             <div class="card-top">
-              <span class="stat-icon"><span class="icon">payments</span></span>
-              <span class="delta success"><span class="icon sm">trending_up</span>+12.5%</span>
+              <span class="stat-icon"><span class="icon">photo_camera</span></span>
+              <span class="delta success"><span class="icon sm">trending_up</span>+15.2%</span>
             </div>
-            <div class="label">Net Revenue</div>
-            <div class="value">$84,230.00</div>
+            <div class="label">누적 촬영 세션 (tb_session)</div>
+            <div class="value">1,284건</div>
           </div>
+          <!-- DB tb_img 기반 지표 -->
           <div class="card">
             <div class="card-top">
-              <span class="stat-icon" style="background:rgba(241,49,49,0.12);color:var(--error);"><span class="icon">error</span></span>
-              <span class="delta error">High Priority</span>
+              <span class="stat-icon" style="background:rgba(0,95,255,0.12);color:var(--info);"><span class="icon">collections</span></span>
+              <span class="delta info">Active</span>
             </div>
-            <div class="label">System Alerts</div>
-            <div class="value">3 Active</div>
+            <div class="label">활성 레퍼런스 이미지 (tb_img)</div>
+            <div class="value">342개</div>
           </div>
+          <!-- DB tb_snap 기반 지표 -->
           <div class="card">
             <div class="card-top">
-              <span class="stat-icon" style="background:rgba(0,95,255,0.12);color:var(--info);"><span class="icon">info</span></span>
-              <span class="delta info">Pending</span>
+              <span class="stat-icon" style="background:rgba(255,193,7,0.12);color:#ffc107;"><span class="icon">auto_awesome</span></span>
+              <span class="delta">Today</span>
             </div>
-            <div class="label">Pending Updates</div>
-            <div class="value">12 Tasks</div>
+            <div class="label">신규 유저 스냅 (tb_snap)</div>
+            <div class="value">48건</div>
           </div>
         </div>
 
         <div class="panel">
           <div class="panel-head">
-            <h2>Task Overview</h2>
+            <h2>최근 촬영 세션 현황 (Latest Sessions)</h2>
           </div>
           <table>
             <thead>
               <tr>
-                <th>Task Name</th>
-                <th>Assignee</th>
-                <th style="text-align:center;">Status</th>
-                <th style="text-align:right;">Actions</th>
+                <th>세션 ID (sId)</th>
+                <th>사용자 (userId)</th>
+                <th>참조 이미지 (imgId)</th>
+                <th style="text-align:center;">상태 (sStat)</th>
+                <th style="text-align:right;">시작 시간 (sDate)</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>Dashboard Redesign</td>
-                <td><span class="avatar-dot">AK</span>Alex Kim</td>
-                <td style="text-align:center;"><span class="badge success badge-row"><span class="icon sm">check_circle</span>COMPLETE</span></td>
-                <td style="text-align:right;">
-                  <span class="table-actions">
-                    <button class="icon-btn" aria-label="Edit"><span class="icon sm">edit</span></button>
-                    <button class="icon-btn" aria-label="Delete" style="color:var(--error);"><span class="icon sm">delete</span></button>
-                  </span>
-                </td>
+                <td>1714730400001</td>
+                <td><span class="avatar-dot">UK</span>user_102</td>
+                <td>ref_img_99</td>
+                <td style="text-align:center;"><span class="badge success badge-row"><span class="icon sm">check_circle</span>COMPLETED</span></td>
+                <td style="text-align:right; color:var(--muted);">1714730400</td>
               </tr>
               <tr>
-                <td>API Integration</td>
-                <td><span class="avatar-dot">JM</span>Justin Mason</td>
-                <td style="text-align:center;"><span class="badge info badge-row"><span class="icon sm">sync</span>IN PROGRESS</span></td>
-                <td style="text-align:right;">
-                  <span class="table-actions">
-                    <button class="icon-btn" aria-label="Edit"><span class="icon sm">edit</span></button>
-                    <button class="icon-btn" aria-label="Delete" style="color:var(--error);"><span class="icon sm">delete</span></button>
-                  </span>
-                </td>
+                <td>1714730400502</td>
+                <td><span class="avatar-dot">JM</span>user_205</td>
+                <td>ref_img_42</td>
+                <td style="text-align:center;"><span class="badge info badge-row"><span class="icon sm">sync</span>READY</span></td>
+                <td style="text-align:right; color:var(--muted);">1714730415</td>
+              </tr>
+              <tr>
+                <td>1714730401203</td>
+                <td><span class="avatar-dot">AS</span>user_88</td>
+                <td>ref_img_12</td>
+                <td style="text-align:center;"><span class="badge error badge-row"><span class="icon sm">cancel</span>FAILED</span></td>
+                <td style="text-align:right; color:var(--muted);">1714730450</td>
               </tr>
             </tbody>
           </table>
