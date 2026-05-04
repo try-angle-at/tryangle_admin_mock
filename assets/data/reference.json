@@ -3,6 +3,7 @@
   "references": [
     {
       "fileName": "fullshot_1.jpg",
+      "aiDocId": "",
       "tags": [ "스트릿", "후면카메라", "데님","반팔" ],
       "title": "fullshot 1 포즈 레퍼런스",
       "description": "광각으로 찍은 사진입니다. 음료를 얼굴 위치에 맞춰 사진을 찍는것이 이 사진의 포인트입니다. ",
@@ -19,6 +20,7 @@
     },
     {
       "fileName": "fullshot_2.jpeg",
+      "aiDocId": "fullshot_2_ai.json",
       "tags": [ "스트릿", "후면카메라", "반팔","백팩","미니스커트","" ],
       "title": "fullshot 2 포즈 레퍼런스",
       "description": "광각으로 찍은 사진입니다. 발끝까지 잘 나올 수 있도록 유의해주세요.",
@@ -35,6 +37,7 @@
     },
     {
       "fileName": "fullshot_3.jpg",
+      "aiDocId": "",
       "tags": [ "청량", "후면카메라", "셔츠", "데님", "스포츠화" ],
       "title": "fullshot 3 포즈 레퍼런스",
       "description": "카메라를 신경 안쓰는듯한 무심함이 포인트인 사진입니다. 바닥에 앉아 아래에서 위로 찍으면 더 잘나오는 사진입니다. ",
@@ -51,6 +54,7 @@
     },
     {
       "fileName": "fullshot_4.jpg",
+      "aiDocId": "",
       "tags": [ "스트릿", "러블리", "후면카메라", "미니스커트","안경","트레이닝자켓" ],
       "title": "fullshot 4 포즈 레퍼런스",
       "description": "위에서 아래를 찍는 구도로 모델은 허리가 아프지만 찍으면 러블리한 느낌이 나는 사진입니다.",
@@ -67,6 +71,7 @@
     },
     {
       "fileName": "kneeshot_1.jpeg",
+      "aiDocId": "kneeshot_1_ai.json",
       "tags": [ "러블리", "후면카메라", "코트", "머플러", "미니스커트" ],
       "title": "kneeshot 1 포즈 레퍼런스",
       "description": "강하게 팔짱을 끼게 되면, 오히려 옷의 주름이나 상체가 부각되보일 수 있어 주의하여 사진을 찍어주세요.",
@@ -83,6 +88,7 @@
     },
     {
       "fileName": "kneeshot_2.png",
+      "aiDocId": "",
       "tags": [ "청량", "빈티지", "후면카메라", "셔츠", "미니스커트", "숄더백" ],
       "title": "kneeshot 2 포즈 레퍼런스",
       "description": "햇빛을 가리는듯하게 무심하게 손을 머리 위로 올리는 것이 포인트인 사진입니다. 고개를 과하게 뒤로한다면, 오히려 이상해보일수가 있어요",
@@ -99,6 +105,7 @@
     },
     {
       "fileName": "waistshot_1.jpg",
+      "aiDocId": "",
       "tags": [ "귀여움", "후면카메라", "토트백", "머플러", "더블코트" ],
       "title": "waistshot 1 포즈 레퍼런스",
       "description": "몸을 살짝 기울이는 것이 포인트입니다. 너무 과하게 기울이면 이상해보일 수 있어요.",
@@ -115,6 +122,7 @@
     },
     {
       "fileName": "waistshot_2.jpeg",
+      "aiDocId": "waistshot_2_ai.json",
       "tags": [ "러블리", "청량", "후면카메라", "스웨터", "숄더백" ],
       "title": "waistshot 2 포즈 레퍼런스",
       "description": "인물이 정중앙에 올수있도록 유의하며 찍어주세요. ",
@@ -131,6 +139,7 @@
     },
     {
       "fileName": "waistshot_3.jpg",
+      "aiDocId": "",
       "tags": [ "러블리", "후면카메라", "셔츠" ],
       "title": "waistshot 3 포즈 레퍼런스",
       "description": "위에서 아래를 찍는 구도와 광각으로 찍는 것이 매력인 사진입니다. 상의를 돋보이게 할 수 있습니다.",
