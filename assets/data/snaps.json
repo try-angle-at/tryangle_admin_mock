@@ -76,6 +76,21 @@
       "viewCnt": 27
     },
     {
+      "id": 834,
+      "userId": 56201,
+      "prodId": 3,
+      "imgId": 35,
+      "sId": 1714834580,
+      "snapUrl": "https://pub-a309ad8a0a6e4a629ad982d710e35276.r2.dev/legacy/snaps/snap_834_1714834580.png",
+      "fileName": "snap_834_1714834580.png",
+      "mime": "image/png",
+      "storageClass": "Standard",
+      "size": "8.44 MB",
+      "uploadedAt": "2026년 05월 05일 00시 13분 00초",
+      "gender": 0,
+      "viewCnt": 0
+    },
+    {
       "id": 905,
       "userId": 4311,
       "prodId": 2,
