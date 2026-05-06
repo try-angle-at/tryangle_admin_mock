@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>회원가입 | TryAngle Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0">
+  <link rel="stylesheet" href="./assets/auth.css">
+  <script src="./assets/auth.js"></script>
+</head>
+<body class="auth-page">
+  <div class="auth-shell">
+    <section class="auth-card" aria-label="회원가입 카드">
+      <aside class="auth-intro">
+        <div class="auth-brand"><span class="icon">person_add</span>TryAngle Join</div>
+        <h2 style="margin:0;font-size:26px;line-height:1.25;">회원가입</h2>
+        <p style="margin:0;color:rgba(255,255,255,0.86);font-size:14px;line-height:1.6;">필수 정보 입력 후 계정을 생성합니다.</p>
+      </aside>
+
+      <div class="auth-form-wrap">
+        <form id="signupForm" class="auth-form" autocomplete="on">
+          <div class="field">
+            <label for="email">이메일*</label>
+            <input id="email" name="email" type="email" required placeholder="manager@tryangle.com">
+          </div>
+
+          <div class="field">
+            <label for="password">비밀번호*</label>
+            <input id="password" name="password" type="password" required minlength="4" placeholder="최소 4자">
+          </div>
+
+          <div class="field">
+            <label for="passwordConfirm">비밀번호 확인*</label>
+            <input id="passwordConfirm" name="passwordConfirm" type="password" required minlength="4" placeholder="비밀번호 재입력">
+          </div>
+
+          <div class="field">
+            <label for="name">이름</label>
+            <input id="name" name="name" type="text" placeholder="홍길동">
+          </div>
+
+          <div class="field">
+            <label for="nickname">닉네임</label>
+            <input id="nickname" name="nickname" type="text" placeholder="길동매니저">
+          </div>
+
+          <div class="field">
+            <label for="phone">전화번호</label>
+            <input id="phone" name="phone" type="tel" placeholder="010-1234-5678">
+          </div>
+
+          <div class="field">
+            <label for="profileImage">프로필 이미지 업로드(fileId)</label>
+            <input id="profileImage" name="profileImage" type="file" accept="image/*">
+          </div>
+
+          <p id="authMsg" class="auth-msg" role="alert"></p>
+
+          <div class="auth-actions">
+            <a class="auth-link" href="./login.html">로그인 화면으로 돌아가기</a>
+            <button type="submit" class="auth-btn">회원가입</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      var auth = window.TryAngleAuth;
+      if (!auth) return;
+
+      var form = document.getElementById('signupForm');
+      var msg = document.getElementById('authMsg');
+
+      function setMessage(text, type) {
+        msg.textContent = text;
+        msg.className = 'auth-msg open ' + type;
+      }
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        if (form.password.value !== form.passwordConfirm.value) {
+          setMessage('비밀번호와 비밀번호 확인이 일치하지 않습니다.', 'error');
+          return;
+        }
+
+        var imageFile = form.profileImage && form.profileImage.files ? form.profileImage.files[0] : null;
+        var fileId = imageFile ? ('uploads/' + imageFile.name) : '';
+
+        var payload = {
+          email: form.email.value,
+          password: form.password.value,
+          name: form.name.value,
+          nickname: form.nickname.value,
+          phone: form.phone.value,
+          desc: '',
+          fileId: fileId,
+          extra: {},
+          state: 1
+        };
+
+        var created = auth.register(payload);
+        if (!created.ok) {
+          setMessage(created.message, 'error');
+          return;
+        }
+
+        auth.login(payload.email, payload.password);
+        setMessage('회원가입이 완료되었습니다. 대시보드로 이동합니다.', 'success');
+        window.setTimeout(function () {
+          window.location.replace('./index.html');
+        }, 220);
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>로그인 | TryAngle Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0">
+  <link rel="stylesheet" href="./assets/auth.css">
+  <script src="./assets/auth.js"></script>
+</head>
+<body class="auth-page">
+  <div class="auth-shell">
+    <section class="auth-card" aria-label="로그인 카드">
+      <aside class="auth-intro">
+        <div class="auth-brand">TryAngle Admin</div>
+        <p style="margin:0;color:rgba(255,255,255,0.86);font-size:14px;line-height:1.6;">관리자 대시보드에 접근하세요.</p>
+      </aside>
+
+      <div class="auth-form-wrap">
+        <h2>관리자 로그인</h2>
+
+        <form id="loginForm" class="auth-form" autocomplete="on">
+          <div class="field">
+            <label for="email">이메일</label>
+            <input id="email" name="email" type="email" required placeholder="admin@tryangle.com">
+          </div>
+
+          <div class="field">
+            <label for="password">비밀번호</label>
+            <input id="password" name="password" type="password" required placeholder="••••••••">
+          </div>
+
+          <p id="authMsg" class="auth-msg" role="alert"></p>
+
+          <div class="auth-actions">
+            <a class="auth-link" href="./signup.html">회원가입 하러 가기</a>
+            <button type="submit" class="auth-btn">로그인</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      var auth = window.TryAngleAuth;
+      if (!auth) return;
+
+      var next = new URLSearchParams(window.location.search).get('next') || './index.html';
+      var existingSession = auth.getSession();
+      if (existingSession && existingSession.user && Number(existingSession.user.state) === 1) {
+        window.location.replace(next);
+        return;
+      }
+
+      var form = document.getElementById('loginForm');
+      var msg = document.getElementById('authMsg');
+
+      function setMessage(text, type) {
+        msg.textContent = text;
+        msg.className = 'auth-msg open ' + type;
+      }
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var email = form.email.value;
+        var password = form.password.value;
+        var result = auth.login(email, password);
+
+        if (!result.ok) {
+          setMessage(result.message, 'error');
+          return;
+        }
+
+        setMessage('로그인 성공. 대시보드로 이동합니다.', 'success');
+        window.setTimeout(function () {
+          window.location.replace(next);
+        }, 180);
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -5,6 +5,20 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>TryAngle Admin Dashboard</title>
   <link rel="stylesheet" href="./assets/admin.css">
+  <script src="./assets/auth.js"></script>
+  <script>
+    (function () {
+      try {
+        var session = JSON.parse(localStorage.getItem('tryangle_auth_session') || 'null');
+        if (!session || !session.user || Number(session.user.state) !== 1) {
+          var next = encodeURIComponent('./index.html');
+          window.location.replace('./login.html?next=' + next);
+        }
+      } catch (e) {
+        window.location.replace('./login.html?next=' + encodeURIComponent('./index.html'));
+      }
+    })();
+  </script>
   <script src="./assets/data/ai_data/index.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,6 +54,8 @@
           <input type="text" placeholder="사용자 ID 또는 세션 ID 검색...">
         </div>
         <div class="right">
+          <span id="authUserDisplay" style="font-size:12px;color:var(--muted);margin-right:4px;"></span>
+          <button id="logoutBtn" class="btn" style="padding:6px 10px;font-size:12px;">로그아웃</button>
           <button class="icon-btn" aria-label="Notifications" style="position:relative;">
             <span class="icon">notifications</span>
             <span class="notification-dot"></span>
@@ -151,6 +167,25 @@
   </div>
   <script>
     (function () {
+      var auth = window.TryAngleAuth;
+      var userDisplay = document.getElementById('authUserDisplay');
+      var logoutBtn = document.getElementById('logoutBtn');
+
+      if (auth) {
+        var session = auth.getSession();
+        if (session && session.user && userDisplay) {
+          var name = session.user.nickname || session.user.name || session.user.email;
+          userDisplay.textContent = name + ' (' + session.user.role + ')';
+        }
+
+        if (logoutBtn) {
+          logoutBtn.addEventListener('click', function () {
+            auth.clearSession();
+            window.location.replace('./login.html');
+          });
+        }
+      }
+
       var docs = window.__AI_DATA_DOCS__;
       if (!docs) return;
 
